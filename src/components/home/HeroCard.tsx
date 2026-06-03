@@ -3,62 +3,43 @@ import { ArrowRight, Target } from "lucide-react";
 import { useProgress } from "@/lib/progress";
 import { allLessons } from "@/lib/curriculum";
 
-const DAILY_GOAL_XP = 30;
-
 export function HeroCard() {
   const { progress } = useProgress();
   const level = Math.floor(progress.xp / 100) + 1;
   const levelProgress = progress.xp % 100;
   const next = allLessons.find((l) => !progress.completed.includes(l.id)) ?? allLessons[0];
-  const dailyPct = Math.min(100, Math.round(((progress.xp % DAILY_GOAL_XP) / DAILY_GOAL_XP) * 100));
+  const today = new Date().toISOString().slice(0, 10);
+  const todayXp = progress.lastDay === today ? Math.min(progress.dailyGoal, progress.xp) : 0;
+  const dailyPct = Math.min(100, Math.round((todayXp / progress.dailyGoal) * 100));
 
   return (
     <section className="mx-4 mt-4 rise-in">
       <div className="relative overflow-hidden rounded-3xl bg-gradient-hero text-white p-5 shadow-card">
-        {/* decorative pattern */}
-        <div
-          className="absolute inset-0 opacity-20 pointer-events-none"
-          aria-hidden
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(45deg, rgba(255,255,255,0.25) 0 2px, transparent 2px 12px)",
-          }}
-        />
+        <div className="absolute inset-0 opacity-20 pointer-events-none" aria-hidden style={{ backgroundImage: "repeating-linear-gradient(45deg, rgba(255,255,255,0.25) 0 2px, transparent 2px 12px)" }} />
         <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-gold/30 blur-2xl" aria-hidden />
-
         <div className="relative">
           <h1 className="font-display font-black text-2xl leading-tight">
-            Bonjour Barack <span className="inline-block ayi-float">👋</span>
+            Bonjour {progress.username} <span className="inline-block ayi-float">👋</span>
           </h1>
-          <p className="font-medium text-white/90 mt-1">
-            Prêt à apprendre le Fon aujourd&apos;hui&nbsp;?
-          </p>
+          <p className="font-medium text-white/90 mt-1">Prêt à apprendre le Fon aujourd&apos;hui&nbsp;?</p>
 
-          {/* Level progress */}
           <div className="mt-5">
             <div className="flex items-center justify-between text-xs font-bold mb-1.5">
               <span className="opacity-90">Niveau {level}</span>
               <span className="opacity-90">{levelProgress}/100 XP</span>
             </div>
             <div className="h-3 bg-white/25 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gold rounded-full transition-all duration-700 shimmer-overlay relative"
-                style={{ width: `${levelProgress}%` }}
-              />
+              <div className="h-full bg-gold rounded-full transition-all duration-700 shimmer-overlay relative" style={{ width: `${levelProgress}%` }} />
             </div>
           </div>
 
-          {/* Daily goal */}
           <div className="mt-3 flex items-center gap-2 text-xs font-bold">
             <Target className="w-4 h-4" />
             <span className="opacity-90">Objectif du jour</span>
-            <span className="ml-auto">{dailyPct}%</span>
+            <span className="ml-auto">{todayXp}/{progress.dailyGoal} XP</span>
           </div>
           <div className="h-1.5 mt-1 bg-white/25 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-white rounded-full transition-all duration-700"
-              style={{ width: `${dailyPct}%` }}
-            />
+            <div className="h-full bg-white rounded-full transition-all duration-700" style={{ width: `${dailyPct}%` }} />
           </div>
 
           <Link
