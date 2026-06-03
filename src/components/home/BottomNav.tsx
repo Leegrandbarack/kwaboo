@@ -1,11 +1,12 @@
+import { Link } from "@tanstack/react-router";
 import { Home, BookOpen, Trophy, Users, User } from "lucide-react";
 
 const tabs = [
-  { id: "home", label: "Accueil", icon: Home },
-  { id: "learn", label: "Apprendre", icon: BookOpen },
-  { id: "rank", label: "Classement", icon: Trophy },
-  { id: "community", label: "Communauté", icon: Users },
-  { id: "profile", label: "Profil", icon: User },
+  { id: "home", label: "Accueil", icon: Home, to: "/" as const },
+  { id: "learn", label: "Apprendre", icon: BookOpen, to: "/learn" as const },
+  { id: "rank", label: "Classement", icon: Trophy, to: "/leaderboard" as const },
+  { id: "community", label: "Communauté", icon: Users, to: "/community" as const },
+  { id: "profile", label: "Profil", icon: User, to: "/profile" as const },
 ];
 
 export function BottomNav({ active = "home" }: { active?: string }) {
@@ -16,26 +17,19 @@ export function BottomNav({ active = "home" }: { active?: string }) {
           const Icon = t.icon;
           const isActive = t.id === active;
           return (
-            <button
+            <Link
               key={t.id}
+              to={t.to}
               className={`relative flex flex-col items-center gap-0.5 py-2 rounded-xl transition-colors ${
                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <div
-                className={`relative grid place-items-center w-11 h-9 rounded-xl transition-all ${
-                  isActive ? "bg-primary/15 scale-105" : ""
-                }`}
-              >
+              <div className={`relative grid place-items-center w-11 h-9 rounded-xl transition-all ${isActive ? "bg-primary/15 scale-105" : ""}`}>
                 <Icon className="w-5 h-5" strokeWidth={isActive ? 2.6 : 2} />
               </div>
-              <span className={`text-[10px] font-black ${isActive ? "" : "font-bold"}`}>
-                {t.label}
-              </span>
-              {isActive && (
-                <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-primary pop-in" />
-              )}
-            </button>
+              <span className={`text-[10px] font-black ${isActive ? "" : "font-bold"}`}>{t.label}</span>
+              {isActive && <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-primary pop-in" />}
+            </Link>
           );
         })}
       </div>
