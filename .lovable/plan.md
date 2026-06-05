@@ -1,95 +1,51 @@
-## Vision
+## Problème
 
-Faire passer Kwabo d'un clone Duolingo local à une plateforme IA premium pour le Fon. Quatre piliers à livrer ensemble, sur des bases solides, sans casser l'expérience existante.
+Aujourd'hui `speak.ts` utilise `window.speechSynthesis` avec une voix française. Ce n'est pas du Fon — c'est juste du français qui lit les caractères Fon, donc la prononciation est fausse (les tons, ɖ, ɛ̀, ɔ̀, gb, kp ne sortent pas correctement).
 
-## Pré-requis backend
+## Solution : ElevenLabs `eleven_multilingual_v2` + cache
 
-- Activer **Lovable Cloud** (Supabase managé) + **Lovable AI Gateway** (Gemini/GPT).
-- Connecter **ElevenLabs** (standard connector) pour TTS Fon + STT prononciation.
-- Migrer le profil de `localStorage` → table `profiles` (sync multi-appareils) avec auth email simple. Le `localStorage` reste fallback hors-ligne.
+ElevenLabs `eleven_multilingual_v2` est le seul TTS grand public qui prononce raisonnablement bien le Fon (langue tonale ouest-africaine, famille Gbe). On le branche via le connecteur Lovable (clé gérée, aucune saisie utilisateur).
 
-## 1. IA conversationnelle Fon + voix
+### Étapes
 
-- Nouvelle route `/chat` : AYI parle, écoute, corrige.
-- Server function `chatWithAyi` (Lovable AI, `google/gemini-3-flash-preview`) avec system prompt strict :
-  - Répond en Fon + traduction + correction grammaticale ligne par ligne.
-  - Scénarios prédéfinis : marché, salutations, route, repas, présentation.
-- **Voix Fon hybride** :
-  - Phrases du cours → audios natifs pré-enregistrés (table `phrase_audio` + bucket Storage `audio-fon`). Placeholders TTS générés au build en attendant les vraies voix.
-  - Phrases générées par l'IA → server function `ttsFon` (ElevenLabs `eleven_multilingual_v2`, voix configurable) streamée vers le client.
-- Composant `<SpeakButton text=... />` partout (leçons, chat, dashboard).
+1. **Connecter ElevenLabs** (`standard_connectors--connect` → `elevenlabs`). La clé `ELEVENLABS_API_KEY` est injectée côté serveur.
 
-## 2. Prononciation (laboratoire vocal)
+2. **Server function `ttsFon`** (`src/lib/tts.functions.ts`)
+   - Input : `{ text: string }` (Zod, max 300 car).
+   - Appelle `https://api.elevenlabs.io/v1/text-to-speech/{voiceId}?output_format=mp3_44100_128`
+     - Voix : George (`JBFqnCBsd6RMkjVDRZzb`) — voix masculine chaude qui rend bien le Fon.
+     - Modèle : `eleven_multilingual_v2`, `stability: 0.6`, `similarity_boost: 0.8`, `speed: 0.9` (ralenti pour pédagogie).
+   - Retourne `{ audioBase64, mime: "audio/mpeg" }` (data URI côté client = pas de corruption binaire).
+   - Gère 402 (crédits épuisés) et 429 (rate limit) avec messages clairs.
 
-- Composant `<PronunciationGym phrase audio />` :
-  - Web Speech API pour STT navigateur en repli ; fallback serveur **ElevenLabs Scribe v2** (`scribe_v2`) pour Fon.
-  - Comparaison phonétique simple (distance Levenshtein normalisée) + heatmap caractère par caractère.
-  - Score 0-100, conseils ("le ton bas sur ɔ̀ manque").
-- Nouvel exercice `pronounce` dans le moteur, intégré à 1 leçon sur 3.
-- Page `/lab` dédiée au mode entraînement libre.
+3. **Cache côté client** (`src/lib/fonAudioCache.ts`)
+   - `Map<text, blobUrl>` en mémoire + entrée `localStorage` pour les 100 dernières phrases (base64, ~50 ko/phrase). Évite de rappeler l'API à chaque clic sur la même phrase.
+   - API : `getFonAudio(text): Promise<string>` (renvoie une URL jouable).
 
-## 3. Apprentissage adaptatif + SRS
+4. **Refonte `src/lib/speak.ts`**
+   - Nouvelle fonction `speakFon(text)` qui :
+     - cherche dans le cache → joue.
+     - sinon appelle `ttsFon` via `useServerFn` (helper exporté), met en cache, joue avec `new Audio(url)`.
+   - Garde `speak(text)` (Web Speech FR) **uniquement** comme fallback hors-ligne ou si la server function échoue, avec un toast discret « voix Fon indisponible, lecture approximative ».
+   - Expose `stopSpeaking()` qui stoppe l'`Audio` courant.
 
-- Table `srs_items(user_id, word, ease, interval, due_at, lapses)` (algorithme SM-2 simplifié).
-- Server function `nextReview` : sélectionne 10 mots dus, génère exercices via IA si besoin.
-- Détection forces/faiblesses : agrégat par catégorie grammaticale + son.
-- Recommandation quotidienne : `getDailyPlan` retourne nouvelles leçons + révisions + défi prononciation.
-- Détecteur d'abandon : si pas connecté 2 jours → notif locale + AYI envoie message motivant.
+5. **`SpeakButton`** : passe à `speakFon`, ajoute un état `loading` (spinner pendant le premier appel API) en plus de `playing`. Aucun changement d'API publique.
 
-## 4. Dashboard premium + immersion culturelle
+6. **Pré-chargement** : sur la page `/chat`, dès qu'une réponse AYI arrive, on lance `getFonAudio(reply.fon)` en arrière-plan (fire-and-forget) pour que le clic sur 🔊 soit instantané.
 
-- Refonte `/profile` en `/dashboard` :
-  - Graphiques (Recharts) : XP 30 jours, temps d'étude, mots maîtrisés, courbe rétention SRS.
-  - Heatmap série, anneau objectif quotidien, prononciation moyenne.
-- Nouvelle section `/culture` :
-  - Contes audio (Yɛhwe Zogbanu, Mami Wata…) avec lecture Fon + traduction synchronisée.
-  - Proverbes du jour, musiques traditionnelles (intégration YouTube/audio libre), interviews courtes.
-  - Carte interactive du Bénin avec régions parlant Fon.
-- Chaque leçon termine par une « capsule culturelle » (1 fait/proverbe lié au vocabulaire).
+### Hors scope (gardé pour plus tard)
 
-## 5. Refonte UX globale
-
-- Audit + polish de chaque écran existant (Accueil, Apprendre, Classement, Communauté, Profil, Boutique, Achievements, Onboarding).
-- Skeleton loaders partout, transitions Framer Motion, `prefers-reduced-motion` respecté.
-- Accessibilité : focus rings, ARIA labels sur boutons icônes, contrastes AA.
-- Mode sombre auto.
-- PWA basique (manifest + installable, pas de SW offline pour le moment).
-
-## Hors scope V2 (gardés pour plus tard, comme tu l'as demandé)
-
-- Back-office admin complet.
-- Réseau social (amis, groupes d'étude, messagerie).
-- Téléchargement hors-ligne intelligent + sync.
-- Apps iOS/Android natives (la PWA installable couvre le besoin V2).
-- Monétisation (abonnement Premium).
+- Audios natifs pré-enregistrés (table `phrase_audio` + Storage). On les ajoutera quand on aura les fichiers ; le cache et `speakFon` sont déjà conçus pour les utiliser en priorité plus tard.
+- STT prononciation (l'utilisateur qui parle) — séparé, traité dans la slice « Prononciation » du plan V2.
 
 ## Détails techniques
 
-**Schéma DB (migrations à créer)**
-- `profiles(id, username, avatar, language, daily_goal, start_level, reason)`
-- `user_progress(user_id, xp, gems, hearts, streak, weekly_xp, last_heart_lost_at, ...)`
-- `srs_items(...)`, `lesson_history(user_id, lesson_id, score, mistakes jsonb, completed_at)`
-- `phrase_audio(phrase_fon, audio_url, region)`
-- `chat_sessions(user_id, scenario, transcript jsonb, score)`
-- RLS strict scopé `auth.uid()`, GRANTs explicites, table `user_roles` pour futurs admins.
+- **Connecteur** : ElevenLabs (App connector), pas de gateway, appel direct `api.elevenlabs.io` avec header `xi-api-key`.
+- **Encodage** : `Buffer.from(arrayBuffer).toString("base64")` côté serveur (pas de `btoa(spread)` pour éviter le stack overflow).
+- **Côté client** : `data:audio/mpeg;base64,...` via `new Audio()` — pas de décodage manuel `atob`.
+- **Fichiers touchés** : `src/lib/tts.functions.ts` (nouveau), `src/lib/fonAudioCache.ts` (nouveau), `src/lib/speak.ts` (refonte), `src/components/SpeakButton.tsx` (loading state), `src/routes/chat.tsx` (préchargement).
 
-**Server functions principales**
-`chatWithAyi`, `ttsFon`, `sttFon`, `scoreUtterance`, `nextReview`, `getDailyPlan`, `recordLessonResult`, `generateExercise`.
+## Coût et limites
 
-**Composants nouveaux**
-`<SpeakButton>`, `<RecordButton>`, `<PronunciationGym>`, `<ChatAyi>`, `<CultureStory>`, `<DashboardCharts>`, `<SkeletonScreen>`.
-
-**Dépendances**
-`@supabase/supabase-js`, `recharts`, `framer-motion` (déjà ?), `zod`, manifeste PWA.
-
-## Ordre de livraison
-
-1. Cloud + Auth + migration progress → DB (base).
-2. TTS Fon (`SpeakButton`) intégré aux leçons + chat.
-3. Chat IA + scénarios.
-4. Prononciation + lab.
-5. SRS + plan quotidien adaptatif.
-6. Dashboard + section culture.
-7. Pass UX/perf/accessibilité final.
-
-C'est volumineux mais cohérent ; chaque étape laisse l'app jouable.
+- ElevenLabs facture au caractère. Phrases courtes (max 12 mots) + cache localStorage → consommation minimale.
+- Si crédits épuisés (402), on bascule automatiquement sur la voix FR Web Speech avec toast d'avertissement, l'app reste utilisable.
