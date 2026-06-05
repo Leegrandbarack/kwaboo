@@ -1,100 +1,95 @@
-## Objectif
+## Vision
 
-Faire de Kwabo une vraie expérience type Duolingo, jouable de bout en bout, avec tous les boutons fonctionnels. Stockage 100% local (localStorage) — pas de compte requis.
+Faire passer Kwabo d'un clone Duolingo local à une plateforme IA premium pour le Fon. Quatre piliers à livrer ensemble, sur des bases solides, sans casser l'expérience existante.
 
-## 1. Onboarding (premier lancement)
+## Pré-requis backend
 
-Nouveau flow `/welcome` → `/onboarding` affiché tant que `progress.onboarded !== true`.
+- Activer **Lovable Cloud** (Supabase managé) + **Lovable AI Gateway** (Gemini/GPT).
+- Connecter **ElevenLabs** (standard connector) pour TTS Fon + STT prononciation.
+- Migrer le profil de `localStorage` → table `profiles` (sync multi-appareils) avec auth email simple. Le `localStorage` reste fallback hors-ligne.
 
-Étapes (style cartes plein écran + AYI qui parle) :
-1. **Choix de la langue** — grille avec drapeaux : 🇧🇯 Fon (actif), Yoruba, Wolof, Swahili, Lingala, Bambara (badge "Bientôt", désactivés)
-2. **Pourquoi apprends-tu ?** — Culture / Famille / Voyage / Travail / Plaisir
-3. **Connais-tu déjà le Fon ?** — Débutant / Quelques mots / Intermédiaire (place sur le parcours)
-4. **Objectif quotidien** — 5 / 10 / 20 / 30 min (= 10/20/40/60 XP)
-5. **AYI te souhaite la bienvenue** → CTA "Commencer"
+## 1. IA conversationnelle Fon + voix
 
-## 2. Système de cœurs complet
+- Nouvelle route `/chat` : AYI parle, écoute, corrige.
+- Server function `chatWithAyi` (Lovable AI, `google/gemini-3-flash-preview`) avec system prompt strict :
+  - Répond en Fon + traduction + correction grammaticale ligne par ligne.
+  - Scénarios prédéfinis : marché, salutations, route, repas, présentation.
+- **Voix Fon hybride** :
+  - Phrases du cours → audios natifs pré-enregistrés (table `phrase_audio` + bucket Storage `audio-fon`). Placeholders TTS générés au build en attendant les vraies voix.
+  - Phrases générées par l'IA → server function `ttsFon` (ElevenLabs `eleven_multilingual_v2`, voix configurable) streamée vers le client.
+- Composant `<SpeakButton text=... />` partout (leçons, chat, dashboard).
 
-- 5 cœurs max, –1 par erreur (déjà en place)
-- Régénération : 1 cœur toutes les 30 min (calcul à partir de `lastHeartLostAt`)
-- Écran "Plus de cœurs !" qui bloque l'entrée en leçon :
-  - Compte à rebours jusqu'au prochain cœur
-  - Bouton "Recharger avec 350 gemmes"
-  - Bouton "Pratiquer pour gagner un cœur" (mini-révision)
-  - Bouton "Continuer sans cœurs" (mode illimité local)
+## 2. Prononciation (laboratoire vocal)
 
-## 3. Gemmes, XP, succès, boutique
+- Composant `<PronunciationGym phrase audio />` :
+  - Web Speech API pour STT navigateur en repli ; fallback serveur **ElevenLabs Scribe v2** (`scribe_v2`) pour Fon.
+  - Comparaison phonétique simple (distance Levenshtein normalisée) + heatmap caractère par caractère.
+  - Score 0-100, conseils ("le ton bas sur ɔ̀ manque").
+- Nouvel exercice `pronounce` dans le moteur, intégré à 1 leçon sur 3.
+- Page `/lab` dédiée au mode entraînement libre.
 
-- Nouvelle ressource **gemmes** (démarre à 500, +5 par leçon parfaite)
-- Page `/shop` : recharger cœurs, gel de série (streak freeze), doubleur XP 15 min, tenues d'AYI
-- Page `/achievements` : 12 succès (1ère leçon, série 3/7/30 jours, 100 XP, monde terminé, sans-faute, etc.) avec barre de progression
-- Animation confettis + son "ding" à chaque déblocage
+## 3. Apprentissage adaptatif + SRS
 
-## 4. Ligues & classement
+- Table `srs_items(user_id, word, ease, interval, due_at, lapses)` (algorithme SM-2 simplifié).
+- Server function `nextReview` : sélectionne 10 mots dus, génère exercices via IA si besoin.
+- Détection forces/faiblesses : agrégat par catégorie grammaticale + son.
+- Recommandation quotidienne : `getDailyPlan` retourne nouvelles leçons + révisions + défi prononciation.
+- Détecteur d'abandon : si pas connecté 2 jours → notif locale + AYI envoie message motivant.
 
-Page `/leaderboard` :
-- Ligue actuelle (Bronze → Argent → Or → Saphir → Rubis → Émeraude → Diamant)
-- 30 concurrents IA simulés avec XP hebdo aléatoires mais stables (seed = semaine)
-- L'utilisateur s'insère selon son XP de la semaine
-- Top 10 promus, bottom 5 rétrogradés (visualisé)
-- Reset hebdo automatique (lundi)
+## 4. Dashboard premium + immersion culturelle
 
-## 5. Profil
+- Refonte `/profile` en `/dashboard` :
+  - Graphiques (Recharts) : XP 30 jours, temps d'étude, mots maîtrisés, courbe rétention SRS.
+  - Heatmap série, anneau objectif quotidien, prononciation moyenne.
+- Nouvelle section `/culture` :
+  - Contes audio (Yɛhwe Zogbanu, Mami Wata…) avec lecture Fon + traduction synchronisée.
+  - Proverbes du jour, musiques traditionnelles (intégration YouTube/audio libre), interviews courtes.
+  - Carte interactive du Bénin avec régions parlant Fon.
+- Chaque leçon termine par une « capsule culturelle » (1 fait/proverbe lié au vocabulaire).
 
-Page `/profile` :
-- Avatar (8 emojis au choix), pseudo éditable
-- Stats : jours actifs, total XP, leçons finies, mots appris, langue
-- Calendrier de série (heatmap 30 jours)
-- Bouton "Réinitialiser ma progression"
+## 5. Refonte UX globale
 
-## 6. Sélecteur de langue persistant
+- Audit + polish de chaque écran existant (Accueil, Apprendre, Classement, Communauté, Profil, Boutique, Achievements, Onboarding).
+- Skeleton loaders partout, transitions Framer Motion, `prefers-reduced-motion` respecté.
+- Accessibilité : focus rings, ARIA labels sur boutons icônes, contrastes AA.
+- Mode sombre auto.
+- PWA basique (manifest + installable, pas de SW offline pour le moment).
 
-- Bouton drapeau dans la TopBar → ouvre une feuille avec les 6 langues
-- Sélection autre que Fon → toast "Bientôt disponible — rejoins la liste d'attente"
+## Hors scope V2 (gardés pour plus tard, comme tu l'as demandé)
 
-## 7. Bottom nav réellement câblée
-
-Les 5 onglets pointent vers des routes existantes :
-- 🏠 `/` Accueil
-- 📚 `/learn` Parcours plein écran
-- 🏆 `/leaderboard`
-- 👥 `/community` (fil simple : citations Fon, faits culturels, like local)
-- 👤 `/profile`
-
-Active state animé (déjà OK), badge rouge sur Profil si succès non vus.
-
-## 8. Polish Duolingo
-
-- Animation XP qui s'incrémente en fin de leçon
-- Confettis (canvas-confetti) à la complétion
-- Son de bonne/mauvaise réponse (Web Audio bips légers, toggle dans Profil)
-- Modal "Quitter la leçon ?" sur le X (avec AYI triste)
-- Daily streak modal au 1er lancement du jour
-- Animation "monte de niveau" quand XP franchit un palier de 100
+- Back-office admin complet.
+- Réseau social (amis, groupes d'étude, messagerie).
+- Téléchargement hors-ligne intelligent + sync.
+- Apps iOS/Android natives (la PWA installable couvre le besoin V2).
+- Monétisation (abonnement Premium).
 
 ## Détails techniques
 
-**Fichiers nouveaux**
-- `src/routes/onboarding.tsx`, `src/routes/welcome.tsx`
-- `src/routes/leaderboard.tsx`, `src/routes/profile.tsx`, `src/routes/shop.tsx`, `src/routes/achievements.tsx`, `src/routes/community.tsx`, `src/routes/learn.tsx`
-- `src/routes/no-hearts.tsx`
-- `src/lib/achievements.ts` (catalogue + check)
-- `src/lib/leaderboard.ts` (génération PRNG seedée par semaine)
-- `src/lib/sound.ts` (Web Audio mini-engine)
-- `src/components/Confetti.tsx`
-- `src/components/onboarding/*` (LanguagePicker, GoalPicker, etc.)
-- `src/components/QuitLessonDialog.tsx`
-- `src/components/HeartRegenTimer.tsx`
+**Schéma DB (migrations à créer)**
+- `profiles(id, username, avatar, language, daily_goal, start_level, reason)`
+- `user_progress(user_id, xp, gems, hearts, streak, weekly_xp, last_heart_lost_at, ...)`
+- `srs_items(...)`, `lesson_history(user_id, lesson_id, score, mistakes jsonb, completed_at)`
+- `phrase_audio(phrase_fon, audio_url, region)`
+- `chat_sessions(user_id, scenario, transcript jsonb, score)`
+- RLS strict scopé `auth.uid()`, GRANTs explicites, table `user_roles` pour futurs admins.
 
-**Fichiers modifiés**
-- `src/lib/progress.ts` : ajouter `gems`, `dailyGoal`, `language`, `onboarded`, `reason`, `level`, `avatar`, `username`, `lastHeartLostAt`, `weeklyXp`, `xpHistory[]`, `achievements[]`, `soundEnabled`. Fonctions `regenerateHearts()`, `spendGems()`, `addXp()` avec déclenchement succès, `getWeeklyXp()`.
-- `src/components/home/TopBar.tsx` : ajouter sélecteur langue + gemmes
-- `src/components/home/BottomNav.tsx` : câbler `to=` réels
-- `src/components/exercises/ExercisePlayer.tsx` : confettis, son, animation XP, dialog quitter, blocage si 0 cœur
-- `src/routes/__root.tsx` : redirect vers `/welcome` si non onboardé
+**Server functions principales**
+`chatWithAyi`, `ttsFon`, `sttFon`, `scoreUtterance`, `nextReview`, `getDailyPlan`, `recordLessonResult`, `generateExercise`.
+
+**Composants nouveaux**
+`<SpeakButton>`, `<RecordButton>`, `<PronunciationGym>`, `<ChatAyi>`, `<CultureStory>`, `<DashboardCharts>`, `<SkeletonScreen>`.
 
 **Dépendances**
-- `bun add canvas-confetti @types/canvas-confetti`
+`@supabase/supabase-js`, `recharts`, `framer-motion` (déjà ?), `zod`, manifeste PWA.
 
-**Hors scope**
-- Audio natif Fon (TTS), IA conversationnelle, comptes serveur, paiement réel — non inclus, prévu pour V2.
+## Ordre de livraison
+
+1. Cloud + Auth + migration progress → DB (base).
+2. TTS Fon (`SpeakButton`) intégré aux leçons + chat.
+3. Chat IA + scénarios.
+4. Prononciation + lab.
+5. SRS + plan quotidien adaptatif.
+6. Dashboard + section culture.
+7. Pass UX/perf/accessibilité final.
+
+C'est volumineux mais cohérent ; chaque étape laisse l'app jouable.
