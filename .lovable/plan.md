@@ -1,51 +1,65 @@
-## Problème
 
-Aujourd'hui `speak.ts` utilise `window.speechSynthesis` avec une voix française. Ce n'est pas du Fon — c'est juste du français qui lit les caractères Fon, donc la prononciation est fausse (les tons, ɖ, ɛ̀, ɔ̀, gb, kp ne sortent pas correctement).
+## Objectif
 
-## Solution : ElevenLabs `eleven_multilingual_v2` + cache
+Étendre `src/lib/curriculum.ts` avec le contenu des images de la *Grammaire Fongbe ou Fon* : compléter les **pronoms personnels** et créer un nouveau monde **Conjugaison** progressif, dans le style Duolingo (leçons courtes, 5–7 exercices, variés, mots-clés qui réapparaissent).
 
-ElevenLabs `eleven_multilingual_v2` est le seul TTS grand public qui prononce raisonnablement bien le Fon (langue tonale ouest-africaine, famille Gbe). On le branche via le connecteur Lovable (clé gérée, aucune saisie utilisateur).
+## Pédagogie (Duolingo-style)
 
-### Étapes
+- Chaque leçon = 5 à 7 exercices, mélange des 4 types existants (`choice`, `translate`, `order`, `match`).
+- Progression : on introduit 1 concept neuf + on recycle ceux des leçons précédentes.
+- `hint` court systématique sur le premier exercice qui introduit un nouveau pronom/particule.
+- Phrases tirées **directement des images** (ex : « Un jáwè », « Mi yí bó ɖù », « É nɔ ɖɔ fɔngbe ganjí ») pour rester authentique.
+- Difficulté croissante à l'intérieur de chaque leçon : reconnaissance → traduction guidée → reconstruction → match récap.
 
-1. **Connecter ElevenLabs** (`standard_connectors--connect` → `elevenlabs`). La clé `ELEVENLABS_API_KEY` est injectée côté serveur.
+## 1. Compléter le monde « Pronoms personnels » (w3)
 
-2. **Server function `ttsFon`** (`src/lib/tts.functions.ts`)
-   - Input : `{ text: string }` (Zod, max 300 car).
-   - Appelle `https://api.elevenlabs.io/v1/text-to-speech/{voiceId}?output_format=mp3_44100_128`
-     - Voix : George (`JBFqnCBsd6RMkjVDRZzb`) — voix masculine chaude qui rend bien le Fon.
-     - Modèle : `eleven_multilingual_v2`, `stability: 0.6`, `similarity_boost: 0.8`, `speed: 0.9` (ralenti pour pédagogie).
-   - Retourne `{ audioBase64, mime: "audio/mpeg" }` (data URI côté client = pas de corruption binaire).
-   - Gère 402 (crédits épuisés) et 429 (rate limit) avec messages clairs.
+Garder les 4 leçons existantes. Ajouter 3 leçons :
 
-3. **Cache côté client** (`src/lib/fonAudioCache.ts`)
-   - `Map<text, blobUrl>` en mémoire + entrée `localStorage` pour les 100 dernières phrases (base64, ~50 ko/phrase). Évite de rappeler l'API à chaque clic sur la même phrase.
-   - API : `getFonAudio(text): Promise<string>` (renvoie une URL jouable).
+- **w3l5 — Nyɛ, Nyì, Un (1ʳᵉ personne, sujet/complément)** : Un = je (sujet), Nyɛ = moi (emphatique/complément), Nyì = variante de Nyɛ. Exemples : « Un jáwè », « Un ná yì Glèxwé », « Nyɛ kpódó fofó », « Nyɛ ma sanfú né ».
+- **w3l6 — Wè, Yě (2ᵉ sg complément & 3ᵉ pl)** : Wè = toi (complément), Yě = ils/elles. Exemples : « Doo nú wè », « Agoò nú wè », « Yè klán gbɛ̀ », « Ahwàn gblé dó yě ».
+- **w3l7 — Possessifs & réflexifs** : `ce` (mon), `towe` (ton), `tɔ́n` (son), `mǐtɔ̀n`, `mitɔ̀n`, `yětɔ̀n` ; réflexifs `nyɛɖéé`, `hwiɖéé`, `éɖéé`, `miɖéé`, `yěɖéé`. Match récap final.
 
-4. **Refonte `src/lib/speak.ts`**
-   - Nouvelle fonction `speakFon(text)` qui :
-     - cherche dans le cache → joue.
-     - sinon appelle `ttsFon` via `useServerFn` (helper exporté), met en cache, joue avec `new Audio(url)`.
-   - Garde `speak(text)` (Web Speech FR) **uniquement** comme fallback hors-ligne ou si la server function échoue, avec un toast discret « voix Fon indisponible, lecture approximative ».
-   - Expose `stopSpeaking()` qui stoppe l'`Audio` courant.
+## 2. Nouveau monde « Conjugaison » (w4)
 
-5. **`SpeakButton`** : passe à `speakFon`, ajoute un état `loading` (spinner pendant le premier appel API) en plus de `playing`. Aucun changement d'API publique.
+```text
+w4 — Conjugaison      ⚡ couleur primary
+ ├── w4l1 Impératif singulier
+ ├── w4l2 Impératif pluriel (Mi…)
+ ├── w4l3 Forme négative (Ma… ó)
+ ├── w4l4 Particules (bo, ló, ná, ní, vě)
+ ├── w4l5 Aoriste (radical seul)
+ ├── w4l6 Passé accompli (ko)
+ ├── w4l7 Futur (na)
+ ├── w4l8 Habituel (nɔ)
+ └── w4l9 Progressif (ɖò… wɛ̀)
+```
 
-6. **Pré-chargement** : sur la page `/chat`, dès qu'une réponse AYI arrive, on lance `getFonAudio(reply.fon)` en arrière-plan (fire-and-forget) pour que le clic sur 🔊 soit instantané.
+Exemples concrets repris des images, par leçon :
 
-### Hors scope (gardé pour plus tard)
+- **Impératif sg** : Gbɔ̀ ! / N'àbɔ̌ ! / Wǎ mì / Sɛ yi ɖòn kpɛɖé.
+- **Impératif pl** : Mi ɖ'álɔ té / Mi dó gbɛ̀ / Mi glá ! / Mi yí bó ɖù.
+- **Négatif** : Ma j'àyì ó / Ma bà ɖò nà ó / Mi ma nɔ gdadógbádó ó.
+- **Particules** : Wǎ bó ! (bo) / Mǎwù ló bló (ló) / Sin ní yi kɔ̀ (ní) / Vè glá (vě).
+- **Aoriste** : A sè à ? / É jǎwè / Un wá yì Zanjɛ́nnádó.
+- **Passé accompli (ko)** : Un ko kpan'lɔ̀ / Mǐ kó wá Gbɔxíkɔ̀n / Un ko kpò.
+- **Futur (na)** : Un ná yì Glèxwé / É ná fɛ́ gba ta wè.
+- **Habituel (nɔ)** : É nɔ ɖɔ fɔngbe ganjí / Avún éló nɔ hó ɖésú / Cukú nɔ lun ɖè.
+- **Progressif** : É ɖò bìbí wɛ̀ / Tɔ́ ɔ́ ɖò sin ɖi wɛ̀ / Koklójó ɖò asi kó wɛ̀.
 
-- Audios natifs pré-enregistrés (table `phrase_audio` + Storage). On les ajoutera quand on aura les fichiers ; le cache et `speakFon` sont déjà conçus pour les utiliser en priorité plus tard.
-- STT prononciation (l'utilisateur qui parle) — séparé, traité dans la slice « Prononciation » du plan V2.
+Chaque leçon : 1 `choice` d'intro (règle), 2 `translate` (Fon→FR puis FR→Fon), 1 `order` (reconstruction), 1 `match` final (4 paires de la leçon). Quelques leçons longues ajoutent un 2ᵉ `choice` sur un piège (ex. ne pas confondre habituel `nɔ` et progressif `ɖò…wɛ̀`).
 
-## Détails techniques
+## 3. Intégration UI
 
-- **Connecteur** : ElevenLabs (App connector), pas de gateway, appel direct `api.elevenlabs.io` avec header `xi-api-key`.
-- **Encodage** : `Buffer.from(arrayBuffer).toString("base64")` côté serveur (pas de `btoa(spread)` pour éviter le stack overflow).
-- **Côté client** : `data:audio/mpeg;base64,...` via `new Audio()` — pas de décodage manuel `atob`.
-- **Fichiers touchés** : `src/lib/tts.functions.ts` (nouveau), `src/lib/fonAudioCache.ts` (nouveau), `src/lib/speak.ts` (refonte), `src/components/SpeakButton.tsx` (loading state), `src/routes/chat.tsx` (préchargement).
+- Les nouvelles leçons apparaissent **automatiquement** dans `LearningPath` via `worlds[]`.
+- Rien à changer dans `ExercisePlayer` ni `lesson.$id.tsx` : les 4 types d'exercices sont déjà supportés.
+- Le monde w4 utilise la même mécanique de cœurs/XP que les autres.
 
-## Coût et limites
+## Hors scope
 
-- ElevenLabs facture au caractère. Phrases courtes (max 12 mots) + cache localStorage → consommation minimale.
-- Si crédits épuisés (402), on bascule automatiquement sur la voix FR Web Speech avec toast d'avertissement, l'app reste utilisable.
+- Pas de TTS dans cette tâche (le sujet ElevenLabs reste en attente).
+- Pas de nouvel exercice "écoute" tant que la voix Fon n'est pas réglée.
+- Pas de progression backend : on reste sur le store local existant.
+
+## Fichier modifié
+
+- `src/lib/curriculum.ts` — ajout de 3 leçons à w3 + nouveau monde w4 avec 9 leçons (≈ 50 nouveaux exercices).
