@@ -34,13 +34,15 @@ function Home() {
         <AyiTip />
         <CultureCard />
 
-        <div className="mt-10 px-4">
+        <div className="mt-16 px-4">
           <div className="flex items-baseline justify-between">
-            <h2 className="font-display font-black text-xl">Ton parcours</h2>
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              Aventure Fɔngbè
-            </span>
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Parcours</div>
+              <h2 className="font-display text-2xl mt-1">Ton chemin en Fɔngbè</h2>
+            </div>
+            <span className="text-xs text-muted-foreground tabular-nums">I.</span>
           </div>
+          <div className="hairline mt-4" />
         </div>
 
         <div className="mt-4">

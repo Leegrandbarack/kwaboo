@@ -11,8 +11,8 @@ const tabs = [
 
 export function BottomNav({ active = "home" }: { active?: string }) {
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 bg-background/90 backdrop-blur-xl border-t border-border/60">
-      <div className="max-w-2xl mx-auto px-2 py-1.5 grid grid-cols-5">
+    <nav className="fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur-xl border-t border-border">
+      <div className="max-w-2xl mx-auto px-2 py-1 grid grid-cols-5">
         {tabs.map((t) => {
           const Icon = t.icon;
           const isActive = t.id === active;
@@ -20,15 +20,13 @@ export function BottomNav({ active = "home" }: { active?: string }) {
             <Link
               key={t.id}
               to={t.to}
-              className={`relative flex flex-col items-center gap-0.5 py-2 rounded-xl transition-colors ${
-                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+              className={`relative flex flex-col items-center gap-1 py-2.5 transition-colors ${
+                isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <div className={`relative grid place-items-center w-11 h-9 rounded-xl transition-all ${isActive ? "bg-primary/15 scale-105" : ""}`}>
-                <Icon className="w-5 h-5" strokeWidth={isActive ? 2.6 : 2} />
-              </div>
-              <span className={`text-[10px] font-black ${isActive ? "" : "font-bold"}`}>{t.label}</span>
-              {isActive && <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-primary pop-in" />}
+              <Icon className="w-[18px] h-[18px]" strokeWidth={isActive ? 2 : 1.6} />
+              <span className={`text-[10px] tracking-wide ${isActive ? "font-medium" : ""}`}>{t.label}</span>
+              {isActive && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-px bg-foreground" />}
             </Link>
           );
         })}
