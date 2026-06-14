@@ -10,27 +10,32 @@ export function TopBar() {
   const lang = LANGUAGES.find((l) => l.id === progress.language) ?? LANGUAGES[0];
 
   return (
-    <header className="sticky top-0 z-30 bg-background/85 backdrop-blur-xl border-b border-border/60">
-      <div className="max-w-2xl mx-auto px-3 py-2.5 flex items-center gap-2">
+    <header className="sticky top-0 z-30 bg-background/90 backdrop-blur-xl border-b border-border/70">
+      <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
         <button
           onClick={() => setOpen(true)}
-          className="flex items-center gap-1.5 px-2 py-1.5 rounded-xl bg-muted/50 hover:bg-muted active:scale-95 transition"
+          className="flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-muted btn-press"
           aria-label="Changer de langue"
         >
-          <span className="text-2xl leading-none">{lang.flag}</span>
+          <span className="text-xl leading-none">{lang.flag}</span>
         </button>
 
-        <div className="font-display font-black tracking-tight text-base mr-auto">KWABO</div>
+        <Link to="/" className="mr-auto flex items-baseline gap-1.5">
+          <span className="font-display text-2xl leading-none">Kwabo</span>
+          <span className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Fɔngbè</span>
+        </Link>
 
-        <Stat icon={<Flame className="w-4 h-4" />} value={progress.streak} color="coral" />
-        <Stat icon={<Gem className="w-4 h-4" />} value={progress.gems} color="primary" />
-        <Stat icon={<Zap className="w-4 h-4 fill-current" />} value={progress.xp} color="gold" />
-        <Stat icon={<Heart className="w-4 h-4 fill-current" />} value={progress.unlimitedHearts ? "∞" : progress.hearts} color="coral" max={progress.unlimitedHearts ? undefined : MAX_HEARTS} />
+        <div className="flex items-center gap-3 text-xs">
+          <Stat icon={<Flame className="w-3.5 h-3.5" strokeWidth={2} />} value={progress.streak} tone="coral" />
+          <Stat icon={<Gem className="w-3.5 h-3.5" strokeWidth={2} />} value={progress.gems} tone="primary" />
+          <Stat icon={<Zap className="w-3.5 h-3.5" strokeWidth={2} />} value={progress.xp} tone="gold" />
+          <Stat icon={<Heart className="w-3.5 h-3.5" strokeWidth={2} />} value={progress.unlimitedHearts ? "∞" : progress.hearts} tone="coral" max={progress.unlimitedHearts ? undefined : MAX_HEARTS} />
+        </div>
 
         <Link
           to="/profile"
           aria-label="Profil"
-          className="ml-1 w-9 h-9 rounded-full bg-gradient-to-br from-primary to-gold grid place-items-center text-xl shadow-card ring-2 ring-background"
+          className="ml-1 w-8 h-8 rounded-full bg-muted border border-border grid place-items-center text-base hover:bg-accent btn-press"
         >
           {progress.avatar}
         </Link>
@@ -40,12 +45,12 @@ export function TopBar() {
   );
 }
 
-function Stat({ icon, value, color, max }: { icon: React.ReactNode; value: number | string; color: "coral" | "gold" | "primary"; max?: number }) {
-  const cls = color === "coral" ? "text-coral" : color === "gold" ? "text-gold" : "text-primary";
+function Stat({ icon, value, tone, max }: { icon: React.ReactNode; value: number | string; tone: "coral" | "gold" | "primary"; max?: number }) {
+  const cls = tone === "coral" ? "text-coral" : tone === "gold" ? "text-gold" : "text-primary";
   return (
-    <div className={`flex items-center gap-0.5 font-display font-black text-xs ${cls}`}>
+    <div className={`flex items-center gap-1 font-medium tabular-nums ${cls}`}>
       {icon}
-      <span className="tabular-nums">{value}{max ? <span className="opacity-50 text-[10px]">/{max}</span> : null}</span>
+      <span>{value}{max ? <span className="text-muted-foreground/70 text-[10px]">/{max}</span> : null}</span>
     </div>
   );
 }

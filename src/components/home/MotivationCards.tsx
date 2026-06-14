@@ -8,52 +8,50 @@ export function MotivationCards() {
 
   const cards = [
     {
-      icon: <Flame className="w-5 h-5" />,
+      icon: <Flame className="w-4 h-4" strokeWidth={1.8} />,
       tone: "coral" as const,
-      title: progress.streak > 0 ? `Série de ${progress.streak} jour${progress.streak > 1 ? "s" : ""} !` : "Démarre ta série",
-      sub: progress.streak > 0 ? "Continue, ne casse pas la chaîne !" : "Termine une leçon aujourd'hui.",
+      eyebrow: "Série",
+      title: progress.streak > 0 ? `${progress.streak} jour${progress.streak > 1 ? "s" : ""}` : "À démarrer",
+      sub: progress.streak > 0 ? "Ne casse pas la chaîne." : "Termine une leçon aujourd'hui.",
     },
     {
-      icon: <Trophy className="w-5 h-5" />,
+      icon: <Trophy className="w-4 h-4" strokeWidth={1.8} />,
       tone: "gold" as const,
-      title: `Plus que ${xpToNext} XP`,
-      sub: `pour passer au niveau ${level + 1}.`,
+      eyebrow: `Niveau ${level + 1}`,
+      title: `${xpToNext} XP`,
+      sub: "à gagner pour passer le palier.",
     },
     {
-      icon: <Target className="w-5 h-5" />,
+      icon: <Target className="w-4 h-4" strokeWidth={1.8} />,
       tone: "primary" as const,
-      title: "Badge du jour",
-      sub: "Termine une leçon pour le gagner.",
+      eyebrow: "Badge",
+      title: "Du jour",
+      sub: "Une leçon terminée suffit.",
     },
   ];
 
   return (
-    <section className="mt-6 px-4">
-      <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 snap-x snap-mandatory scrollbar-none">
+    <section className="mt-8 px-4">
+      <div className="grid grid-cols-3 gap-2.5">
         {cards.map((c, i) => (
           <article
             key={i}
-            className={`snap-start shrink-0 w-[78%] max-w-[280px] rounded-2xl p-4 shadow-card border-2 ${
-              c.tone === "coral"
-                ? "bg-coral/10 border-coral/30"
-                : c.tone === "gold"
-                ? "bg-gold/15 border-gold/40"
-                : "bg-primary/10 border-primary/30"
-            }`}
+            className="rounded-xl bg-card border border-border p-3.5 hover:border-foreground/20 transition-colors"
           >
             <div
-              className={`w-10 h-10 rounded-xl grid place-items-center mb-2 ${
+              className={`w-7 h-7 rounded-md grid place-items-center mb-3 ${
                 c.tone === "coral"
-                  ? "bg-coral text-coral-foreground"
+                  ? "bg-coral/10 text-coral"
                   : c.tone === "gold"
-                  ? "bg-gold text-gold-foreground"
-                  : "bg-primary text-primary-foreground"
+                  ? "bg-gold/15 text-gold-foreground"
+                  : "bg-primary/10 text-primary"
               }`}
             >
               {c.icon}
             </div>
-            <h3 className="font-display font-black text-sm leading-tight">{c.title}</h3>
-            <p className="text-xs text-muted-foreground font-medium mt-1">{c.sub}</p>
+            <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{c.eyebrow}</div>
+            <h3 className="font-display text-xl leading-none mt-1">{c.title}</h3>
+            <p className="text-[11px] text-muted-foreground mt-2 leading-snug">{c.sub}</p>
           </article>
         ))}
       </div>

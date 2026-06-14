@@ -12,39 +12,25 @@ const UPCOMING = [
 
 export function UpcomingUnits() {
   return (
-    <section className="mt-10">
-      <div className="mx-4 rounded-3xl bg-muted/60 border-2 border-dashed border-border px-5 py-4 mb-4 text-center">
-        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-          Bientôt disponible
+    <section className="mt-16 px-4">
+      <div className="flex items-baseline justify-between mb-6">
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">À venir</div>
+          <h2 className="font-display text-2xl mt-1">Sept mondes encore à explorer</h2>
         </div>
-        <h2 className="font-display font-black text-lg mt-0.5">
-          Encore 7 mondes à explorer
-        </h2>
+        <span className="text-xs text-muted-foreground tabular-nums">07</span>
       </div>
 
-      <div className="flex flex-col items-center gap-5">
-        {UPCOMING.map((u, i) => {
-          const offset = [0, 60, 90, 60, 0, -60, -90][i % 7];
-          return (
-            <div
-              key={u.n}
-              style={{ transform: `translateX(${offset}px)` }}
-              className="flex flex-col items-center gap-1.5 opacity-70"
-            >
-              <div className="relative w-20 h-20 rounded-full bg-muted text-muted-foreground grid place-items-center text-3xl btn-3d">
-                <span className="absolute inset-0 grid place-items-center opacity-30">
-                  {u.emoji}
-                </span>
-                <Lock className="w-6 h-6 relative" />
-                <span className="absolute -top-2 -left-2 bg-card border-2 border-border text-[10px] font-black w-7 h-7 rounded-full grid place-items-center">
-                  {u.n}
-                </span>
-              </div>
-              <div className="text-xs font-bold">{u.title}</div>
-            </div>
-          );
-        })}
-      </div>
+      <ul className="divide-y divide-border border-y border-border">
+        {UPCOMING.map((u) => (
+          <li key={u.n} className="flex items-center gap-4 py-4">
+            <span className="font-display text-sm text-muted-foreground tabular-nums w-8">{String(u.n).padStart(2, "0")}</span>
+            <span className="text-xl opacity-60" aria-hidden>{u.emoji}</span>
+            <span className="flex-1 font-medium text-sm">{u.title}</span>
+            <Lock className="w-3.5 h-3.5 text-muted-foreground" strokeWidth={1.8} />
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
