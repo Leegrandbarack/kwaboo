@@ -239,10 +239,25 @@
   .scrollbar-none { scrollbar-width: none; }
 
   /* Legacy aliases so existing classes don't break */
-  .btn-3d { @apply btn-press; }
+  .btn-3d {
+    transition: transform 0.12s ease, box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+  }
+  .btn-3d:active { transform: translateY(1px); }
   .shadow-card { box-shadow: var(--shadow-card); }
   .shadow-elevated { box-shadow: var(--shadow-elevated); }
-  .bg-gradient-hero { @apply surface-ink; }
-  .bg-african-pattern { @apply bg-paper; }
+  .bg-gradient-hero {
+    background:
+      radial-gradient(at 20% 0%, color-mix(in oklab, var(--primary-glow) 35%, transparent) 0, transparent 55%),
+      radial-gradient(at 100% 100%, color-mix(in oklab, var(--gold) 22%, transparent) 0, transparent 55%),
+      linear-gradient(160deg, var(--primary) 0%, color-mix(in oklab, var(--primary) 80%, black) 100%);
+    color: var(--primary-foreground);
+  }
+  .bg-african-pattern {
+    background-color: var(--color-paper);
+    background-image:
+      radial-gradient(circle at 20% 30%, color-mix(in oklab, var(--gold) 6%, transparent) 0, transparent 40%),
+      radial-gradient(circle at 80% 70%, color-mix(in oklab, var(--primary) 5%, transparent) 0, transparent 45%);
+  }
   .shimmer-overlay { position: relative; }
 }
+
