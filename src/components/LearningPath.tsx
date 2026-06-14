@@ -41,23 +41,22 @@ export function LearningPath() {
 }
 
 function WorldHeader({ world, index }: { world: (typeof worlds)[number]; index: number }) {
-  const accent =
+  const bg =
     world.color === "primary"
-      ? "text-primary"
+      ? "bg-primary text-primary-foreground"
       : world.color === "gold"
-      ? "text-gold-foreground"
-      : "text-coral";
+      ? "bg-gold text-gold-foreground"
+      : "bg-coral text-coral-foreground";
   return (
-    <div className="mx-4 flex items-end justify-between gap-4 pb-4 border-b border-border">
+    <div className={`mx-4 rounded-3xl ${bg} px-5 py-4 shadow-card flex items-center justify-between`}>
       <div>
-        <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-          <span className={`gold-rule ${accent}`} style={{ background: "currentColor" }} />
-          <span>Monde {String(index + 1).padStart(2, "0")}</span>
+        <div className="text-xs font-bold opacity-80 uppercase tracking-wider">
+          Monde {index + 1}
         </div>
-        <h2 className="font-display text-3xl mt-2 leading-tight">{world.title}</h2>
-        <p className="text-sm text-muted-foreground mt-1 max-w-md">{world.subtitle}</p>
+        <h2 className="text-xl font-black">{world.title}</h2>
+        <p className="text-sm opacity-90">{world.subtitle}</p>
       </div>
-      <div className="text-4xl opacity-80" aria-hidden>{world.emoji}</div>
+      <div className="text-5xl" aria-hidden>{world.emoji}</div>
     </div>
   );
 }
@@ -77,37 +76,37 @@ function LessonNode({
 }) {
   const palette =
     color === "primary"
-      ? "bg-primary text-primary-foreground border-primary"
+      ? "bg-primary text-primary-foreground"
       : color === "gold"
-      ? "bg-gold text-gold-foreground border-gold"
-      : "bg-coral text-coral-foreground border-coral";
+      ? "bg-gold text-gold-foreground"
+      : "bg-coral text-coral-foreground";
 
-  const lockedCls = "bg-transparent text-muted-foreground border-border";
-  const doneCls = "bg-success text-success-foreground border-success";
+  const lockedCls = "bg-muted text-muted-foreground";
+  const doneCls = "bg-success text-success-foreground";
 
-  const ring = active ? "ring-1 ring-offset-4 ring-offset-background ring-foreground" : "";
+  const ring = active ? "ring-4 ring-offset-4 ring-offset-background ring-gold" : "";
 
   const inner = (
-    <div className={`relative flex flex-col items-center gap-2.5 ${locked ? "opacity-55" : ""}`}>
+    <div className={`relative flex flex-col items-center gap-2 ${locked ? "opacity-60" : ""}`}>
       <div
-        className={`w-16 h-16 rounded-full grid place-items-center text-2xl border btn-press transition-shadow ${ring} ${
+        className={`w-20 h-20 rounded-full grid place-items-center text-3xl btn-3d ${ring} ${
           done ? doneCls : locked ? lockedCls : palette
-        } ${!locked && !done ? "shadow-card" : ""}`}
+        }`}
       >
-        {done ? <Check className="w-6 h-6" strokeWidth={2} /> : locked ? <Lock className="w-4 h-4" strokeWidth={1.8} /> : <span>{lesson.emoji}</span>}
+        {done ? <Check className="w-8 h-8" strokeWidth={3} /> : locked ? <Lock className="w-7 h-7" /> : <span>{lesson.emoji}</span>}
         {active && (
-          <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-foreground text-background text-[9px] uppercase tracking-[0.18em] px-2 py-0.5 rounded-full flex items-center gap-1 pop-in">
-            <Star className="w-2.5 h-2.5 fill-current" /> En cours
+          <span className="absolute -top-3 -right-3 bg-gold text-gold-foreground text-[10px] font-black px-2 py-0.5 rounded-full shadow flex items-center gap-1 pop-in">
+            <Star className="w-3 h-3 fill-current" /> COMMENCER
           </span>
         )}
       </div>
-      <div className="text-xs font-medium text-center max-w-[120px] text-foreground/80">{lesson.title}</div>
+      <div className="text-xs font-bold text-center max-w-[120px]">{lesson.title}</div>
     </div>
   );
 
   if (locked) return inner;
   return (
-    <Link to="/lesson/$id" params={{ id: lesson.id }} className="block hover:opacity-90 transition-opacity">
+    <Link to="/lesson/$id" params={{ id: lesson.id }} className="block hover:scale-105 transition-transform">
       {inner}
     </Link>
   );
