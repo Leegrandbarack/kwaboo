@@ -114,7 +114,8 @@ function LessonNode({
             strokeLinecap="round"
             strokeDasharray="60 289"
             transform="rotate(-90 50 50)"
-            style={{ transformOrigin: "50px 50px", animation: "spin 4s linear infinite" }}
+            className="animate-spin"
+            style={{ transformOrigin: "50px 50px", animationDuration: "4s" }}
           />
         </svg>
       )}
