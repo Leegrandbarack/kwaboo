@@ -35,14 +35,18 @@ export function TopBar() {
         <div className="font-display font-black tracking-tight text-base mr-auto">KWABO</div>
 
         <Stat icon={<Flame className="w-4 h-4" />} value={progress.streak} color="coral" />
-        <Stat icon={<Gem className="w-4 h-4" />} value={progress.gems} color="primary" />
+        <Link to="/shop" aria-label="Boutique" className="press rounded-lg">
+          <Stat icon={<Gem className="w-4 h-4" />} value={progress.gems} color="primary" />
+        </Link>
         <Stat icon={<Zap className="w-4 h-4 fill-current" />} value={progress.xp} color="gold" />
-        <Stat
-          icon={<Heart className="w-4 h-4 fill-current" />}
-          value={progress.unlimitedHearts ? "∞" : progress.hearts}
-          color="coral"
-          max={progress.unlimitedHearts ? undefined : MAX_HEARTS}
-        />
+        <Link to="/shop" aria-label="Cœurs - Boutique" className="press rounded-lg">
+          <Stat
+            icon={<Heart className="w-4 h-4 fill-current" />}
+            value={progress.unlimitedHearts ? "∞" : progress.hearts}
+            color="coral"
+            max={progress.unlimitedHearts ? undefined : MAX_HEARTS}
+          />
+        </Link>
 
         <Link
           to="/profile"
