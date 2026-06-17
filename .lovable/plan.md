@@ -1,65 +1,93 @@
-
 ## Objectif
 
-Étendre `src/lib/curriculum.ts` avec le contenu des images de la *Grammaire Fongbe ou Fon* : compléter les **pronoms personnels** et créer un nouveau monde **Conjugaison** progressif, dans le style Duolingo (leçons courtes, 5–7 exercices, variés, mots-clés qui réapparaissent).
+Rendre Kwaboo crédible comme app pro façon Duolingo, sans modifier les choix déjà validés : **couleurs actuelles conservées**, **typographies actuelles conservées**, **mascotte AYI conservée partout**. On travaille uniquement la **finition** : micro-interactions, hiérarchie, cohérence des composants, états (hover/press/disabled/loading), retours sonores/visuels et rythme d'animation.
 
-## Pédagogie (Duolingo-style)
+## Périmètre : toute l'app
 
-- Chaque leçon = 5 à 7 exercices, mélange des 4 types existants (`choice`, `translate`, `order`, `match`).
-- Progression : on introduit 1 concept neuf + on recycle ceux des leçons précédentes.
-- `hint` court systématique sur le premier exercice qui introduit un nouveau pronom/particule.
-- Phrases tirées **directement des images** (ex : « Un jáwè », « Mi yí bó ɖù », « É nɔ ɖɔ fɔngbe ganjí ») pour rester authentique.
-- Difficulté croissante à l'intérieur de chaque leçon : reconnaissance → traduction guidée → reconstruction → match récap.
+Pages touchées : `index` (home/parcours), `learn`, `lesson.$id`, `chat`, `profile`, `leaderboard`, `achievements`, `shop`, `no-hearts`, `onboarding`, `welcome`, `community`.
 
-## 1. Compléter le monde « Pronoms personnels » (w3)
+## Ce qui change
 
-Garder les 4 leçons existantes. Ajouter 3 leçons :
+### 1. Système de micro-interactions unifié (`src/styles.css`)
+Tokens d'animation centralisés pour que tout réagisse pareil :
+- `--ease-spring`, `--ease-out-soft`, durées `--dur-fast/base/slow`
+- Classes utilitaires : `.press` (scale 0.97 + shadow réduite au :active), `.tap-target` (zone tactile 44px min), `.focus-ring` (anneau accessible cohérent), `.skeleton-shimmer`
+- Remplacement progressif des `transition-all` génériques par des transitions ciblées (transform/opacity/box-shadow) → plus fluide, moins « IA »
 
-- **w3l5 — Nyɛ, Nyì, Un (1ʳᵉ personne, sujet/complément)** : Un = je (sujet), Nyɛ = moi (emphatique/complément), Nyì = variante de Nyɛ. Exemples : « Un jáwè », « Un ná yì Glèxwé », « Nyɛ kpódó fofó », « Nyɛ ma sanfú né ».
-- **w3l6 — Wè, Yě (2ᵉ sg complément & 3ᵉ pl)** : Wè = toi (complément), Yě = ils/elles. Exemples : « Doo nú wè », « Agoò nú wè », « Yè klán gbɛ̀ », « Ahwàn gblé dó yě ».
-- **w3l7 — Possessifs & réflexifs** : `ce` (mon), `towe` (ton), `tɔ́n` (son), `mǐtɔ̀n`, `mitɔ̀n`, `yětɔ̀n` ; réflexifs `nyɛɖéé`, `hwiɖéé`, `éɖéé`, `miɖéé`, `yěɖéé`. Match récap final.
+### 2. Bouton 3D Duolingo-like, version propre
+Le `.btn-3d` actuel est appliqué partout sans variantes claires. Refonte :
+- Variantes : `primary`, `secondary`, `ghost`, `danger`, `success` avec la même mécanique d'enfoncement (translateY au press, ombre interne qui disparaît)
+- État `disabled` réellement distinct (pas juste opacity)
+- État `loading` avec spinner intégré + verrouillage du clic
+- Appliqué dans : `ExercisePlayer` (Vérifier/Continuer), `QuitLessonDialog`, `LearningPath` (nœuds de leçon), `HeroCard`, `no-hearts`, `shop`, `onboarding`
 
-## 2. Nouveau monde « Conjugaison » (w4)
+### 3. Nœuds de leçon (`LearningPath`)
+Polish du parcours, c'est le cœur visible :
+- Halo de progression circulaire SVG autour du nœud actif (au lieu d'un simple ring)
+- Animation d'apparition séquencée (stagger) au scroll/mount
+- Press state physique (enfoncement + rebond)
+- Nœud complété : check animé (draw SVG), pas juste une icône statique
+- Nœud verrouillé : cadenas avec léger shake si on tape dessus
+- Tracé du chemin entre nœuds (SVG path subtil) pour le côté « parcours »
 
-```text
-w4 — Conjugaison      ⚡ couleur primary
- ├── w4l1 Impératif singulier
- ├── w4l2 Impératif pluriel (Mi…)
- ├── w4l3 Forme négative (Ma… ó)
- ├── w4l4 Particules (bo, ló, ná, ní, vě)
- ├── w4l5 Aoriste (radical seul)
- ├── w4l6 Passé accompli (ko)
- ├── w4l7 Futur (na)
- ├── w4l8 Habituel (nɔ)
- └── w4l9 Progressif (ɖò… wɛ̀)
-```
+### 4. ExercisePlayer
+- Transition entre exercices : slide+fade orchestré (au lieu du remount brut)
+- Barre de progression animée avec easing (pas un saut)
+- Feedback correct/incorrect : flash de couleur + shake horizontal + son déjà existant gardé
+- Bulle AYI : entrée pop-in + queue qui pointe correctement
+- Boutons de réponse (choice/order/match) : press state cohérent, focus visible clavier
+- Skeleton de chargement pendant la transition
 
-Exemples concrets repris des images, par leçon :
+### 5. TopBar & BottomNav
+- BottomNav : indicateur actif animé (pill qui glisse entre les items, façon iOS/Linear)
+- TopBar : compteurs (cœurs, gemmes, série) avec animation de tick quand la valeur change (count-up court)
+- Sticky avec backdrop-blur propre + bordure subtile au scroll
 
-- **Impératif sg** : Gbɔ̀ ! / N'àbɔ̌ ! / Wǎ mì / Sɛ yi ɖòn kpɛɖé.
-- **Impératif pl** : Mi ɖ'álɔ té / Mi dó gbɛ̀ / Mi glá ! / Mi yí bó ɖù.
-- **Négatif** : Ma j'àyì ó / Ma bà ɖò nà ó / Mi ma nɔ gdadógbádó ó.
-- **Particules** : Wǎ bó ! (bo) / Mǎwù ló bló (ló) / Sin ní yi kɔ̀ (ní) / Vè glá (vě).
-- **Aoriste** : A sè à ? / É jǎwè / Un wá yì Zanjɛ́nnádó.
-- **Passé accompli (ko)** : Un ko kpan'lɔ̀ / Mǐ kó wá Gbɔxíkɔ̀n / Un ko kpò.
-- **Futur (na)** : Un ná yì Glèxwé / É ná fɛ́ gba ta wè.
-- **Habituel (nɔ)** : É nɔ ɖɔ fɔngbe ganjí / Avún éló nɔ hó ɖésú / Cukú nɔ lun ɖè.
-- **Progressif** : É ɖò bìbí wɛ̀ / Tɔ́ ɔ́ ɖò sin ɖi wɛ̀ / Koklójó ɖò asi kó wɛ̀.
+### 6. États vides, chargement, erreurs
+- Skeletons cohérents (même shimmer) sur `leaderboard`, `achievements`, `community`
+- États vides illustrés avec AYI (mood adapté) au lieu de texte sec
+- `errorComponent` et `notFoundComponent` stylés cohérents avec le reste
 
-Chaque leçon : 1 `choice` d'intro (règle), 2 `translate` (Fon→FR puis FR→Fon), 1 `order` (reconstruction), 1 `match` final (4 paires de la leçon). Quelques leçons longues ajoutent un 2ᵉ `choice` sur un piège (ex. ne pas confondre habituel `nɔ` et progressif `ɖò…wɛ̀`).
+### 7. Modales & feuilles
+- `QuitLessonDialog`, `LanguageSheet` : entrée animée (scale+fade pour modale, slide-up pour sheet), backdrop blur progressif, focus trap propre, fermeture Esc
+- Confetti déjà présent : déclencher aussi sur complétion de leçon (pas seulement fin de parcours)
 
-## 3. Intégration UI
+### 8. Cartes (`HeroCard`, `CultureCard`, `MotivationCards`, `UpcomingUnits`)
+- Hover lift uniforme (translateY + shadow elevate), pas de hover-scale brutal
+- Coins, ombres et bordures harmonisés via tokens
+- Densité revue : padding/gap cohérents entre toutes les cartes
 
-- Les nouvelles leçons apparaissent **automatiquement** dans `LearningPath` via `worlds[]`.
-- Rien à changer dans `ExercisePlayer` ni `lesson.$id.tsx` : les 4 types d'exercices sont déjà supportés.
-- Le monde w4 utilise la même mécanique de cœurs/XP que les autres.
+### 9. Détails de finition
+- Curseur `pointer` partout où c'est cliquable (pas de div cliquable sans état)
+- `aria-label` sur les boutons icône-only (SpeakButton OK, à propager)
+- `prefers-reduced-motion` respecté : désactive les animations non essentielles
+- Tap highlight transparent sur mobile (`-webkit-tap-highlight-color`)
+- Scroll behavior smooth + overscroll-behavior contain dans les leçons
 
-## Hors scope
+## Ce qui ne change PAS
 
-- Pas de TTS dans cette tâche (le sujet ElevenLabs reste en attente).
-- Pas de nouvel exercice "écoute" tant que la voix Fon n'est pas réglée.
-- Pas de progression backend : on reste sur le store local existant.
+- Palette de couleurs actuelle (tokens dans `src/styles.css` inchangés)
+- Polices actuelles (display/body inchangées)
+- Mascotte AYI : conservée sur home, bulles, états vides, dialogs
+- Curriculum, logique de progression, TTS, backend, routes
+- Aucun nouveau package lourd (pas de framer-motion ajouté si possible — on reste sur CSS + classes Tailwind déjà en place ; Confetti et `pop-in` existants réutilisés)
 
-## Fichier modifié
+## Fichiers principaux modifiés
 
-- `src/lib/curriculum.ts` — ajout de 3 leçons à w3 + nouveau monde w4 avec 9 leçons (≈ 50 nouveaux exercices).
+- `src/styles.css` — tokens d'animation, utilitaires `.press` `.focus-ring` `.skeleton-shimmer`, raffinement de `.btn-3d`
+- `src/components/LearningPath.tsx` — halo SVG, stagger, press, tracé
+- `src/components/exercises/ExercisePlayer.tsx` — transitions, feedback, skeletons
+- `src/components/home/TopBar.tsx` — tick counters, blur au scroll
+- `src/components/home/BottomNav.tsx` — pill animée
+- `src/components/QuitLessonDialog.tsx`, `src/components/LanguageSheet.tsx` — animations modale/sheet
+- `src/components/home/{HeroCard,CultureCard,MotivationCards,UpcomingUnits}.tsx` — hover lift uniforme
+- `src/components/SpeakButton.tsx` — press state cohérent
+- `src/components/Confetti.tsx` — déclenchement aussi fin de leçon (via prop existante)
+- Routes : ajustements légers d'états vides/loading uniquement où nécessaire
+
+## Hors périmètre
+
+- Pas de refonte visuelle (couleurs/typo gardées)
+- Pas de TTS Fon (toujours en attente)
+- Pas de nouveaux types d'exercice
+- Pas de backend/auth/DB
