@@ -134,15 +134,61 @@
   }
 }
 
+@layer base {
+  :root {
+    --ease-spring: cubic-bezier(0.22, 1.4, 0.36, 1);
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-fast: 120ms;
+    --dur-base: 220ms;
+    --dur-slow: 420ms;
+  }
+  html { scroll-behavior: smooth; }
+  button, a, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:not(:disabled), a, [role="button"] { cursor: pointer; }
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @layer utilities {
   .btn-3d {
     box-shadow: 0 4px 0 0 var(--shadow-button-color);
-    transition: transform 0.08s ease, box-shadow 0.08s ease;
+    transition: transform var(--dur-fast) var(--ease-out-soft),
+                box-shadow var(--dur-fast) var(--ease-out-soft),
+                filter var(--dur-base) var(--ease-out-soft);
+    will-change: transform;
   }
-  .btn-3d:active {
+  .btn-3d:hover:not(:disabled) { filter: brightness(1.04); }
+  .btn-3d:active:not(:disabled) {
     transform: translateY(3px);
     box-shadow: 0 1px 0 0 var(--shadow-button-color);
   }
+  .btn-3d:disabled {
+    box-shadow: 0 2px 0 0 color-mix(in oklab, var(--shadow-button-color) 40%, transparent);
+    filter: saturate(0.4);
+    cursor: not-allowed;
+  }
+  .press {
+    transition: transform var(--dur-fast) var(--ease-out-soft);
+  }
+  .press:active:not(:disabled) { transform: scale(0.97); }
+  .lift {
+    transition: transform var(--dur-base) var(--ease-out-soft),
+                box-shadow var(--dur-base) var(--ease-out-soft);
+  }
+  .lift:hover { transform: translateY(-3px); box-shadow: 0 14px 32px -16px color-mix(in oklab, var(--primary) 30%, transparent); }
   .ayi-float {
     animation: ayi-float 3s ease-in-out infinite;
   }
@@ -197,5 +243,60 @@
   @keyframes shimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
+  }
+  .skeleton {
+    background: linear-gradient(90deg,
+      color-mix(in oklab, var(--muted) 80%, transparent) 0%,
+      color-mix(in oklab, var(--muted) 50%, transparent) 50%,
+      color-mix(in oklab, var(--muted) 80%, transparent) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s linear infinite;
+    border-radius: 0.75rem;
+  }
+  .stagger-rise > * {
+    opacity: 0;
+    animation: rise-in 0.5s var(--ease-spring) both;
+  }
+  .stagger-rise > *:nth-child(1) { animation-delay: 40ms; }
+  .stagger-rise > *:nth-child(2) { animation-delay: 90ms; }
+  .stagger-rise > *:nth-child(3) { animation-delay: 140ms; }
+  .stagger-rise > *:nth-child(4) { animation-delay: 190ms; }
+  .stagger-rise > *:nth-child(5) { animation-delay: 240ms; }
+  .stagger-rise > *:nth-child(6) { animation-delay: 290ms; }
+  .stagger-rise > *:nth-child(7) { animation-delay: 340ms; }
+  .stagger-rise > *:nth-child(8) { animation-delay: 390ms; }
+  .stagger-rise > *:nth-child(n+9) { animation-delay: 440ms; }
+  .check-draw {
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+    animation: check-draw 0.45s var(--ease-out-soft) 0.1s forwards;
+  }
+  @keyframes check-draw {
+    to { stroke-dashoffset: 0; }
+  }
+  .lock-shake {
+    animation: lock-shake 0.4s ease;
+  }
+  @keyframes lock-shake {
+    0%, 100% { transform: translateX(0) rotate(0); }
+    20% { transform: translateX(-3px) rotate(-3deg); }
+    40% { transform: translateX(3px) rotate(3deg); }
+    60% { transform: translateX(-2px) rotate(-2deg); }
+    80% { transform: translateX(2px) rotate(2deg); }
+  }
+  .flash-success { animation: flash-success 0.6s ease; }
+  @keyframes flash-success {
+    0% { background-color: transparent; }
+    30% { background-color: color-mix(in oklab, var(--success) 22%, transparent); }
+    100% { background-color: transparent; }
+  }
+  .flash-error { animation: flash-error 0.6s ease; }
+  @keyframes flash-error {
+    0% { background-color: transparent; }
+    30% { background-color: color-mix(in oklab, var(--destructive) 22%, transparent); }
+    100% { background-color: transparent; }
+  }
+  .ring-progress {
+    transition: stroke-dashoffset 0.6s var(--ease-out-soft);
   }
 }
