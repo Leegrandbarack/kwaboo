@@ -134,15 +134,61 @@
   }
 }
 
+@layer base {
+  :root {
+    --ease-spring: cubic-bezier(0.22, 1.4, 0.36, 1);
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-fast: 120ms;
+    --dur-base: 220ms;
+    --dur-slow: 420ms;
+  }
+  html { scroll-behavior: smooth; }
+  button, a, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:not(:disabled), a, [role="button"] { cursor: pointer; }
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @layer utilities {
   .btn-3d {
     box-shadow: 0 4px 0 0 var(--shadow-button-color);
-    transition: transform 0.08s ease, box-shadow 0.08s ease;
+    transition: transform var(--dur-fast) var(--ease-out-soft),
+                box-shadow var(--dur-fast) var(--ease-out-soft),
+                filter var(--dur-base) var(--ease-out-soft);
+    will-change: transform;
   }
-  .btn-3d:active {
+  .btn-3d:hover:not(:disabled) { filter: brightness(1.04); }
+  .btn-3d:active:not(:disabled) {
     transform: translateY(3px);
     box-shadow: 0 1px 0 0 var(--shadow-button-color);
   }
+  .btn-3d:disabled {
+    box-shadow: 0 2px 0 0 color-mix(in oklab, var(--shadow-button-color) 40%, transparent);
+    filter: saturate(0.4);
+    cursor: not-allowed;
+  }
+  .press {
+    transition: transform var(--dur-fast) var(--ease-out-soft);
+  }
+  .press:active:not(:disabled) { transform: scale(0.97); }
+  .lift {
+    transition: transform var(--dur-base) var(--ease-out-soft),
+                box-shadow var(--dur-base) var(--ease-out-soft);
+  }
+  .lift:hover { transform: translateY(-3px); box-shadow: 0 14px 32px -16px color-mix(in oklab, var(--primary) 30%, transparent); }
   .ayi-float {
     animation: ayi-float 3s ease-in-out infinite;
   }
