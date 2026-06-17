@@ -99,14 +99,17 @@ export function ExercisePlayer({ lessonId, lessonTitle, exercises }: Props) {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col">
+    <div className={`min-h-dvh flex flex-col ${checked ? (correct ? "flash-success" : "flash-error") : ""}`}>
       <QuitLessonDialog open={showQuit} onCancel={() => setShowQuit(false)} onConfirm={() => navigate({ to: "/" })} />
       <div className="px-4 pt-4 pb-2 flex items-center gap-3">
-        <button aria-label="Quitter" onClick={() => setShowQuit(true)} className="text-muted-foreground hover:text-foreground p-2">
+        <button aria-label="Quitter" onClick={() => setShowQuit(true)} className="press text-muted-foreground hover:text-foreground p-2 rounded-full">
           <X className="w-6 h-6" />
         </button>
         <div className="flex-1 h-3 bg-muted rounded-full overflow-hidden">
-          <div className="h-full bg-primary rounded-full transition-all duration-300" style={{ width: `${progressPct}%` }} />
+          <div
+            className="h-full bg-primary rounded-full"
+            style={{ width: `${progressPct}%`, transition: "width 500ms var(--ease-out-soft)" }}
+          />
         </div>
         <div className="flex items-center gap-1 text-coral font-display font-black">
           <Heart className="w-5 h-5 fill-current" />
@@ -114,11 +117,14 @@ export function ExercisePlayer({ lessonId, lessonTitle, exercises }: Props) {
         </div>
       </div>
 
-      <div className="flex-1 px-4 py-6 max-w-2xl w-full mx-auto">
+      <div
+        key={idx}
+        className={`flex-1 px-4 py-6 max-w-2xl w-full mx-auto pop-in ${checked && !correct ? "shake" : ""}`}
+      >
         <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{ex.prompt}</div>
         <ExerciseBody ex={ex} answer={answer} setAnswer={setAnswer} disabled={checked} />
         {ex.type === "choice" && ex.hint && !checked && (
-          <button onClick={() => setShowHint((s) => !s)} className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-muted-foreground hover:text-foreground">
+          <button onClick={() => setShowHint((s) => !s)} className="press mt-4 inline-flex items-center gap-1 text-xs font-bold text-muted-foreground hover:text-foreground">
             <Lightbulb className="w-4 h-4" /> {showHint ? "Cacher l'indice" : "Indice d'AYI"}
           </button>
         )}
