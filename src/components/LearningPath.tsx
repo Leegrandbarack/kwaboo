@@ -1,34 +1,64 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Check, Lock, Star } from "lucide-react";
-import { worlds, allLessons } from "@/lib/curriculum";
+import { Lock, Star } from "lucide-react";
+import { sections, pathLessons } from "@/lib/curriculum";
 import { useProgress } from "@/lib/progress";
 
 export function LearningPath() {
   const { progress } = useProgress();
 
-  const currentIdx = allLessons.findIndex((l) => !progress.completed.includes(l.id));
-  const activeIdx = currentIdx === -1 ? allLessons.length - 1 : currentIdx;
+  const currentIdx = pathLessons.findIndex((l) => !progress.completed.includes(l.id));
+  const activeIdx = currentIdx === -1 ? pathLessons.length - 1 : currentIdx;
+
+  let cursor = 0;
 
   return (
-    <div className="space-y-12 pb-32">
-      {worlds.map((world, wi) => {
-        const worldLessons = allLessons.filter((l) => l.worldId === world.id);
-        const worldStart = allLessons.findIndex((l) => l.worldId === world.id);
-        const worldDone = worldLessons.filter((l) => progress.completed.includes(l.id)).length;
+    <div className="space-y-14 pb-32">
+      {sections.map((section, si) => {
+        const sectionLessons = pathLessons.filter((l) => l.sectionId === section.id);
+        const sectionDone = sectionLessons.filter((l) => progress.completed.includes(l.id)).length;
         return (
-          <section key={world.id}>
-            <WorldHeader world={world} index={wi} done={worldDone} total={worldLessons.length} />
-            <div className="mt-6 flex flex-col items-center gap-6 stagger-rise">
-              {worldLessons.map((l, i) => {
-                const globalIdx = worldStart + i;
-                const done = progress.completed.includes(l.id);
-                const active = globalIdx === activeIdx;
-                const locked = globalIdx > activeIdx;
-                const offset = [0, 60, 90, 60, 0, -60, -90, -60][i % 8];
+          <section key={section.id}>
+            <SectionHeader
+              section={section}
+              index={si}
+              done={sectionDone}
+              total={sectionLessons.length}
+            />
+
+            <div className="mt-6 space-y-10">
+              {section.units.map((unit, ui) => {
+                const unitLessons = pathLessons.filter((l) => l.unitId === unit.id);
+                const unitDone = unitLessons.filter((l) => progress.completed.includes(l.id)).length;
                 return (
-                  <div key={l.id} style={{ transform: `translateX(${offset}px)` }}>
-                    <LessonNode lesson={l} done={done} active={active} locked={locked} color={world.color} />
+                  <div key={unit.id}>
+                    <UnitHeader
+                      unit={unit}
+                      index={ui}
+                      done={unitDone}
+                      total={unitLessons.length}
+                      color={section.color}
+                    />
+                    <div className="mt-5 flex flex-col items-center gap-6 stagger-rise">
+                      {unitLessons.map((l) => {
+                        const globalIdx = cursor++;
+                        const done = progress.completed.includes(l.id);
+                        const active = globalIdx === activeIdx;
+                        const locked = globalIdx > activeIdx;
+                        const offset = [0, 60, 90, 60, 0, -60, -90, -60][globalIdx % 8];
+                        return (
+                          <div key={l.id} style={{ transform: `translateX(${offset}px)` }}>
+                            <LessonNode
+                              lesson={l}
+                              done={done}
+                              active={active}
+                              locked={locked}
+                              color={section.color}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 );
               })}
@@ -40,25 +70,39 @@ export function LearningPath() {
   );
 }
 
-function WorldHeader({ world, index, done, total }: { world: (typeof worlds)[number]; index: number; done: number; total: number }) {
+function SectionHeader({
+  section,
+  index,
+  done,
+  total,
+}: {
+  section: (typeof sections)[number];
+  index: number;
+  done: number;
+  total: number;
+}) {
   const bg =
-    world.color === "primary"
+    section.color === "primary"
       ? "bg-primary text-primary-foreground"
-      : world.color === "gold"
+      : section.color === "gold"
       ? "bg-gold text-gold-foreground"
       : "bg-coral text-coral-foreground";
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   return (
     <div className={`mx-4 rounded-3xl ${bg} px-5 py-4 shadow-card`}>
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
           <div className="text-xs font-bold opacity-80 uppercase tracking-wider">
-            Monde {index + 1} · {done}/{total}
+            Section {index + 1} · {done}/{total} leçons
           </div>
-          <h2 className="text-xl font-black">{world.title}</h2>
-          <p className="text-sm opacity-90">{world.subtitle}</p>
+          <h2 className="text-xl font-black truncate">{section.title}</h2>
+          <p className="text-sm opacity-90 truncate">
+            {section.titleFon} · {section.subtitle}
+          </p>
         </div>
-        <div className="text-5xl" aria-hidden>{world.emoji}</div>
+        <div className="text-5xl shrink-0" aria-hidden>
+          {section.emoji}
+        </div>
       </div>
       <div className="mt-3 h-1.5 rounded-full bg-black/15 overflow-hidden">
         <div
@@ -66,6 +110,41 @@ function WorldHeader({ world, index, done, total }: { world: (typeof worlds)[num
           style={{ width: `${pct}%`, transition: "width 600ms var(--ease-out-soft)" }}
         />
       </div>
+    </div>
+  );
+}
+
+function UnitHeader({
+  unit,
+  index,
+  done,
+  total,
+  color,
+}: {
+  unit: (typeof sections)[number]["units"][number];
+  index: number;
+  done: number;
+  total: number;
+  color: "primary" | "gold" | "coral";
+}) {
+  const accent =
+    color === "primary" ? "text-primary" : color === "gold" ? "text-gold" : "text-coral";
+  const line =
+    color === "primary" ? "bg-primary/20" : color === "gold" ? "bg-gold/25" : "bg-coral/25";
+  return (
+    <div className="mx-4 flex items-center gap-3">
+      <div className={`h-px flex-1 ${line}`} />
+      <div className="text-center">
+        <div className={`text-[10px] font-black uppercase tracking-widest ${accent}`}>
+          Unité {index + 1} · {done}/{total}
+        </div>
+        <div className="text-sm font-black flex items-center gap-1.5 justify-center">
+          <span aria-hidden>{unit.emoji}</span>
+          {unit.title}
+        </div>
+        <div className="text-[11px] font-semibold text-muted-foreground">{unit.titleFon}</div>
+      </div>
+      <div className={`h-px flex-1 ${line}`} />
     </div>
   );
 }
