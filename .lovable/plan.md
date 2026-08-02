@@ -1,93 +1,51 @@
+# Arbre de curriculum fon — livrable JSON
+
 ## Objectif
 
-Rendre Kwaboo crédible comme app pro façon Duolingo, sans modifier les choix déjà validés : **couleurs actuelles conservées**, **typographies actuelles conservées**, **mascotte AYI conservée partout**. On travaille uniquement la **finition** : micro-interactions, hiérarchie, cohérence des composants, états (hover/press/disabled/loading), retours sonores/visuels et rythme d'animation.
+Produire un fichier JSON téléchargeable qui réorganise le contenu pédagogique déjà présent dans l'application (4 mondes, 21 leçons) en une hiérarchie à 3 niveaux **Section > Unité > Leçon**, avec titres en français et traduction fon de chaque label de structure.
 
-## Périmètre : toute l'app
+## Base de départ (contenu existant vérifié)
 
-Pages touchées : `index` (home/parcours), `learn`, `lesson.$id`, `chat`, `profile`, `leaderboard`, `achievements`, `shop`, `no-hearts`, `onboarding`, `welcome`, `community`.
+- Monde 1 « Premiers mots » : Bonjour & Merci / Oui, Non, Au revoir / Comment vas-tu ?
+- Monde 2 « Famille » : Père & Mère / Frère, Sœur, Enfant
+- Monde 3 « Pronoms personnels » : 7 leçons (A & É, formes emphatiques, Mǐ/Mi, Ma subjonctif-impératif, Nyɛ/Nyì/Un, Wè/Yě, possessifs & réflexifs)
+- Monde 4 « Conjugaison » : 9 leçons (impératif sg/pl, négation Ma…ó, particules bo/ló/ní/vě, aoriste, accompli ko, futur na, habituel nɔ, progressif ɖò…wɛ̀)
 
-## Ce qui change
+## Réorganisation pédagogique
 
-### 1. Système de micro-interactions unifié (`src/styles.css`)
-Tokens d'animation centralisés pour que tout réagisse pareil :
-- `--ease-spring`, `--ease-out-soft`, durées `--dur-fast/base/slow`
-- Classes utilitaires : `.press` (scale 0.97 + shadow réduite au :active), `.tap-target` (zone tactile 44px min), `.focus-ring` (anneau accessible cohérent), `.skeleton-shimmer`
-- Remplacement progressif des `transition-all` génériques par des transitions ciblées (transform/opacity/box-shadow) → plus fluide, moins « IA »
+- **Section 1 — Premiers pas** : salutations et politesse, premiers pronoms sujets (A, É) introduits tôt car indispensables aux phrases simples.
+- **Section 2 — Moi et les miens** : famille, formes emphatiques et pronoms pluriels, avec rappels intégrés des salutations.
+- **Section 3 — Agir et parler** : impératif, négation, particules — mêlés à des révisions de pronoms.
+- **Section 4 — Le temps** : aoriste, accompli, futur, habituel, progressif, chaque unité rappelant les pronoms et l'impératif.
 
-### 2. Bouton 3D Duolingo-like, version propre
-Le `.btn-3d` actuel est appliqué partout sans variantes claires. Refonte :
-- Variantes : `primary`, `secondary`, `ghost`, `danger`, `success` avec la même mécanique d'enfoncement (translateY au press, ombre interne qui disparaît)
-- État `disabled` réellement distinct (pas juste opacity)
-- État `loading` avec spinner intégré + verrouillage du clic
-- Appliqué dans : `ExercisePlayer` (Vérifier/Continuer), `QuitLessonDialog`, `LearningPath` (nœuds de leçon), `HeroCard`, `no-hearts`, `shop`, `onboarding`
+Principe appliqué : pas de bloc isolé. Chaque unité contient une leçon nouvelle + une leçon de consolidation qui recycle les notions des unités précédentes.
 
-### 3. Nœuds de leçon (`LearningPath`)
-Polish du parcours, c'est le cœur visible :
-- Halo de progression circulaire SVG autour du nœud actif (au lieu d'un simple ring)
-- Animation d'apparition séquencée (stagger) au scroll/mount
-- Press state physique (enfoncement + rebond)
-- Nœud complété : check animé (draw SVG), pas juste une icône statique
-- Nœud verrouillé : cadenas avec léger shake si on tape dessus
-- Tracé du chemin entre nœuds (SVG path subtil) pour le côté « parcours »
+## Traductions fon
 
-### 4. ExercisePlayer
-- Transition entre exercices : slide+fade orchestré (au lieu du remount brut)
-- Barre de progression animée avec easing (pas un saut)
-- Feedback correct/incorrect : flash de couleur + shake horizontal + son déjà existant gardé
-- Bulle AYI : entrée pop-in + queue qui pointe correctement
-- Boutons de réponse (choice/order/match) : press state cohérent, focus visible clavier
-- Skeleton de chargement pendant la transition
+Les labels sont traduits en fon quand la forme est attestée dans le contenu déjà présent dans l'app (ex. salutations, mots de famille, pronoms). Toute traduction dont la forme ou la tonalité n'est pas attestée est marquée `[À VÉRIFIER - locuteur natif]` au lieu d'être inventée. Aucun contenu de leçon n'est traduit — uniquement les titres de Section, Unité et Leçon.
 
-### 5. TopBar & BottomNav
-- BottomNav : indicateur actif animé (pill qui glisse entre les items, façon iOS/Linear)
-- TopBar : compteurs (cœurs, gemmes, série) avec animation de tick quand la valeur change (count-up court)
-- Sticky avec backdrop-blur propre + bordure subtile au scroll
+## Format du fichier
 
-### 6. États vides, chargement, erreurs
-- Skeletons cohérents (même shimmer) sur `leaderboard`, `achievements`, `community`
-- États vides illustrés avec AYI (mood adapté) au lieu de texte sec
-- `errorComponent` et `notFoundComponent` stylés cohérents avec le reste
+JSON strict, structure :
 
-### 7. Modales & feuilles
-- `QuitLessonDialog`, `LanguageSheet` : entrée animée (scale+fade pour modale, slide-up pour sheet), backdrop blur progressif, focus trap propre, fermeture Esc
-- Confetti déjà présent : déclencher aussi sur complétion de leçon (pas seulement fin de parcours)
+```text
+{
+  "langue": "fon",
+  "sections": [
+    {
+      "id", "titre_fr", "titre_fon",
+      "unites": [
+        { "id", "titre_fr", "titre_fon",
+          "lecons": [ { "id", "titre_fr", "titre_fon", "type": "nouveau|revision", "source_id" } ] }
+      ]
+    }
+  ]
+}
+```
 
-### 8. Cartes (`HeroCard`, `CultureCard`, `MotivationCards`, `UpcomingUnits`)
-- Hover lift uniforme (translateY + shadow elevate), pas de hover-scale brutal
-- Coins, ombres et bordures harmonisés via tokens
-- Densité revue : padding/gap cohérents entre toutes les cartes
+`source_id` référence l'identifiant de la leçon existante (`w1l1`, `w4l7`, …) pour faciliter le raccordement ultérieur au code.
 
-### 9. Détails de finition
-- Curseur `pointer` partout où c'est cliquable (pas de div cliquable sans état)
-- `aria-label` sur les boutons icône-only (SpeakButton OK, à propager)
-- `prefers-reduced-motion` respecté : désactive les animations non essentielles
-- Tap highlight transparent sur mobile (`-webkit-tap-highlight-color`)
-- Scroll behavior smooth + overscroll-behavior contain dans les leçons
+## Livrable
 
-## Ce qui ne change PAS
-
-- Palette de couleurs actuelle (tokens dans `src/styles.css` inchangés)
-- Polices actuelles (display/body inchangées)
-- Mascotte AYI : conservée sur home, bulles, états vides, dialogs
-- Curriculum, logique de progression, TTS, backend, routes
-- Aucun nouveau package lourd (pas de framer-motion ajouté si possible — on reste sur CSS + classes Tailwind déjà en place ; Confetti et `pop-in` existants réutilisés)
-
-## Fichiers principaux modifiés
-
-- `src/styles.css` — tokens d'animation, utilitaires `.press` `.focus-ring` `.skeleton-shimmer`, raffinement de `.btn-3d`
-- `src/components/LearningPath.tsx` — halo SVG, stagger, press, tracé
-- `src/components/exercises/ExercisePlayer.tsx` — transitions, feedback, skeletons
-- `src/components/home/TopBar.tsx` — tick counters, blur au scroll
-- `src/components/home/BottomNav.tsx` — pill animée
-- `src/components/QuitLessonDialog.tsx`, `src/components/LanguageSheet.tsx` — animations modale/sheet
-- `src/components/home/{HeroCard,CultureCard,MotivationCards,UpcomingUnits}.tsx` — hover lift uniforme
-- `src/components/SpeakButton.tsx` — press state cohérent
-- `src/components/Confetti.tsx` — déclenchement aussi fin de leçon (via prop existante)
-- Routes : ajustements légers d'états vides/loading uniquement où nécessaire
-
-## Hors périmètre
-
-- Pas de refonte visuelle (couleurs/typo gardées)
-- Pas de TTS Fon (toujours en attente)
-- Pas de nouveaux types d'exercice
-- Pas de backend/auth/DB
+Un seul fichier téléchargeable depuis le chat : `curriculum-fon-kwabo.json`.
+Aucune modification du code de l'application (`src/lib/curriculum.ts` n'est pas touché).
