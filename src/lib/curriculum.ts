@@ -1197,3 +1197,94 @@ export function getLesson(id: string) {
   }
   return null;
 }
+
+// ---------------------------------------------------------------------------
+// Structure pédagogique : Section > Unité > Leçon
+// Les leçons ci-dessous référencent les ids définis dans `worlds`.
+// ---------------------------------------------------------------------------
+
+export type Unit = {
+  id: string;
+  title: string;
+  titleFon: string;
+  emoji: string;
+  lessonIds: string[];
+};
+
+export type Section = {
+  id: string;
+  title: string;
+  titleFon: string;
+  subtitle: string;
+  emoji: string;
+  color: "primary" | "gold" | "coral";
+  units: Unit[];
+};
+
+export const sections: Section[] = [
+  {
+    id: "s1",
+    title: "Premiers pas",
+    titleFon: "Afɔ nukɔntɔn lɛ",
+    subtitle: "Saluer et engager la conversation",
+    emoji: "👋",
+    color: "primary",
+    units: [
+      { id: "s1u1", title: "Se saluer", titleFon: "Ðò kúdó nú mɛ", emoji: "☀️", lessonIds: ["w1l1", "w1l2"] },
+      { id: "s1u2", title: "Prendre des nouvelles", titleFon: "Kanbyɔ́ mɛ", emoji: "💬", lessonIds: ["w1l3", "w3l1"] },
+    ],
+  },
+  {
+    id: "s2",
+    title: "Moi et les miens",
+    titleFon: "Nyɛ kpó hɛnnu ce kpó",
+    subtitle: "Famille et pronoms personnels",
+    emoji: "👨‍👩‍👧",
+    color: "gold",
+    units: [
+      { id: "s2u1", title: "La maison", titleFon: "Xwé", emoji: "🏠", lessonIds: ["w2l1", "w2l2"] },
+      { id: "s2u2", title: "Se désigner", titleFon: "Ðexlɛ́ mɛɖée", emoji: "🙋", lessonIds: ["w3l2", "w3l5"] },
+      { id: "s2u3", title: "Parler au groupe", titleFon: "Ðɔ nú gbɛ̌ta", emoji: "👥", lessonIds: ["w3l3", "w3l6"] },
+      { id: "s2u4", title: "Ce qui est à moi", titleFon: "Nǔ ce lɛ", emoji: "🎁", lessonIds: ["w3l7"] },
+    ],
+  },
+  {
+    id: "s3",
+    title: "Agir et parler",
+    titleFon: "Wà nǔ bo ɖɔ xó",
+    subtitle: "Impératif, négation et nuances",
+    emoji: "⚡",
+    color: "coral",
+    units: [
+      { id: "s3u1", title: "Donner un ordre", titleFon: "Ná gbè", emoji: "📣", lessonIds: ["w4l1", "w4l2"] },
+      { id: "s3u2", title: "Dire non", titleFon: "Ðɔ eǒ", emoji: "🚫", lessonIds: ["w4l3", "w3l4"] },
+      { id: "s3u3", title: "Nuancer sa phrase", titleFon: "Xógbe sín kpɔ́ndéwú", emoji: "🎚️", lessonIds: ["w4l4"] },
+    ],
+  },
+  {
+    id: "s4",
+    title: "Le temps",
+    titleFon: "Hwenu",
+    subtitle: "Passé, futur, habitudes et progressif",
+    emoji: "⏳",
+    color: "primary",
+    units: [
+      { id: "s4u1", title: "Le fait simple", titleFon: "Nǔwiwa pléwun", emoji: "✅", lessonIds: ["w4l5"] },
+      { id: "s4u2", title: "Parler du passé", titleFon: "Ðɔ xó dó hwexónu", emoji: "🕰️", lessonIds: ["w4l6"] },
+      { id: "s4u3", title: "Parler du futur", titleFon: "Ðɔ xó dó sɔ́gudo", emoji: "🔮", lessonIds: ["w4l7"] },
+      { id: "s4u4", title: "Habitudes & en cours", titleFon: "Aca kpó nǔwiwa hwenɛnu kpó", emoji: "🔁", lessonIds: ["w4l8", "w4l9"] },
+    ],
+  },
+];
+
+const lessonById = new Map(allLessons.map((l) => [l.id, l]));
+
+/** Leçons dans l'ordre pédagogique des sections/unités. */
+export const pathLessons = sections.flatMap((s) =>
+  s.units.flatMap((u) =>
+    u.lessonIds
+      .map((id) => lessonById.get(id))
+      .filter((l): l is (typeof allLessons)[number] => !!l)
+      .map((l) => ({ ...l, sectionId: s.id, unitId: u.id, color: s.color }))
+  )
+);
