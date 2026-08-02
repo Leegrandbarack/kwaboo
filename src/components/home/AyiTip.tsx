@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Ayi } from "@/components/Ayi";
 import { Lightbulb } from "lucide-react";
 
@@ -12,7 +12,11 @@ const TIPS = [
 ];
 
 export function AyiTip() {
-  const tip = useMemo(() => TIPS[Math.floor(Math.random() * TIPS.length)], []);
+  const [tip, setTip] = useState(TIPS[0]);
+  useEffect(() => {
+    setTip(TIPS[Math.floor(Math.random() * TIPS.length)]);
+  }, []);
+
   return (
     <section className="mt-6 mx-4">
       <div className="flex items-end gap-3">
