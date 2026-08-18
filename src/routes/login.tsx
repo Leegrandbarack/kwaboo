@@ -39,6 +39,7 @@ function LoginPage() {
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [online, setOnline] = useState(true);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [info, setInfo] = useState<string | null>(null);
 
   useEffect(() => {
     setOnline(navigator.onLine);
