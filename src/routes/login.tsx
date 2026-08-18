@@ -216,13 +216,14 @@ function LoginPage() {
                 <label htmlFor="password" className="text-xs font-black uppercase tracking-widest text-muted-foreground">
                   Mot de passe
                 </label>
-                <Link
-                  to="/login"
-                  hash="oublie"
-                  className="text-xs font-bold text-primary underline-offset-4 hover:underline"
+                <button
+                  type="button"
+                  onClick={handleForgot}
+                  disabled={busy}
+                  className="text-xs font-bold text-primary underline-offset-4 hover:underline disabled:opacity-60"
                 >
                   Mot de passe oublié ?
-                </Link>
+                </button>
               </div>
               <div className="relative mt-2">
                 <input
