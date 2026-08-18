@@ -285,6 +285,15 @@ function LoginPage() {
               )}
             </div>
 
+            {info && (
+              <div
+                role="status"
+                className="rounded-2xl border border-primary/30 bg-primary/8 p-3.5 text-sm font-semibold text-primary"
+              >
+                {info}
+              </div>
+            )}
+
             {error && (
               <div
                 role="alert"
