@@ -14,6 +14,7 @@ import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NoHeartsRouteImport } from './routes/no-hearts'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as LearnRouteImport } from './routes/learn'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as CommunityRouteImport } from './routes/community'
@@ -45,6 +46,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const NoHeartsRoute = NoHeartsRouteImport.update({
   id: '/no-hearts',
   path: '/no-hearts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LearnRoute = LearnRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/community': typeof CommunityRoute
   '/leaderboard': typeof LeaderboardRoute
   '/learn': typeof LearnRoute
+  '/login': typeof LoginRoute
   '/no-hearts': typeof NoHeartsRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/community': typeof CommunityRoute
   '/leaderboard': typeof LeaderboardRoute
   '/learn': typeof LearnRoute
+  '/login': typeof LoginRoute
   '/no-hearts': typeof NoHeartsRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/community': typeof CommunityRoute
   '/leaderboard': typeof LeaderboardRoute
   '/learn': typeof LearnRoute
+  '/login': typeof LoginRoute
   '/no-hearts': typeof NoHeartsRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/leaderboard'
     | '/learn'
+    | '/login'
     | '/no-hearts'
     | '/onboarding'
     | '/profile'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/leaderboard'
     | '/learn'
+    | '/login'
     | '/no-hearts'
     | '/onboarding'
     | '/profile'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/leaderboard'
     | '/learn'
+    | '/login'
     | '/no-hearts'
     | '/onboarding'
     | '/profile'
@@ -178,6 +190,7 @@ export interface RootRouteChildren {
   CommunityRoute: typeof CommunityRoute
   LeaderboardRoute: typeof LeaderboardRoute
   LearnRoute: typeof LearnRoute
+  LoginRoute: typeof LoginRoute
   NoHeartsRoute: typeof NoHeartsRoute
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/no-hearts'
       fullPath: '/no-hearts'
       preLoaderRoute: typeof NoHeartsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/learn': {
@@ -282,6 +302,7 @@ const rootRouteChildren: RootRouteChildren = {
   CommunityRoute: CommunityRoute,
   LeaderboardRoute: LeaderboardRoute,
   LearnRoute: LearnRoute,
+  LoginRoute: LoginRoute,
   NoHeartsRoute: NoHeartsRoute,
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
