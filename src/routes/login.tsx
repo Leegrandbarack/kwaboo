@@ -114,6 +114,28 @@ function LoginPage() {
     }
   }
 
+  async function handleForgot() {
+    setError(null);
+    setInfo(null);
+    const value = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)) {
+      setFieldErrors((f) => ({ ...f, email: "Entre d'abord ton e-mail pour recevoir le lien." }));
+      return;
+    }
+    if (!online) {
+      setError("Tu sembles hors ligne. Vérifie ta connexion Internet puis réessaie.");
+      return;
+    }
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(value, {
+      redirectTo: `${window.location.origin}/login`,
+    });
+    setInfo(
+      resetError
+        ? "Impossible d'envoyer le lien pour l'instant. Réessaie dans un instant."
+        : "Lien de réinitialisation envoyé. Vérifie ta boîte e-mail.",
+    );
+  }
+
   return (
     <div className="min-h-dvh bg-background lg:grid lg:grid-cols-[1.05fr_1fr]">
       {/* Visual side — desktop only */}
