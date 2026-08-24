@@ -88,7 +88,7 @@ function OnboardingGate() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const p = load();
-    const exempt = pathname === "/welcome" || pathname === "/onboarding" || pathname === "/login";
+    const exempt = pathname === "/welcome" || pathname === "/onboarding" || pathname === "/login" || pathname === "/signup";
     if (!p.onboarded && !exempt) {
       router.navigate({ to: "/welcome" });
     }
