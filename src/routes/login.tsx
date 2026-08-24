@@ -1,10 +1,19 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Eye, EyeOff, Loader2, Check, WifiOff, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, Loader2, Check, WifiOff, AlertCircle, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Ayi } from "@/components/Ayi";
+import { load } from "@/lib/progress";
 import illustration from "@/assets/login-illustration.jpg";
+
+function destinationAfterAuth(): "/" | "/onboarding" {
+  try {
+    return load().onboarded ? "/" : "/onboarding";
+  } catch {
+    return "/";
+  }
+}
 
 export const Route = createFileRoute("/login")({
   head: () => ({
