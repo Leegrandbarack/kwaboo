@@ -101,7 +101,7 @@ function LoginPage() {
       return;
     }
     setStatus("success");
-    setTimeout(() => router.navigate({ to: "/" }), 750);
+    setTimeout(() => router.navigate({ to: destinationAfterAuth() }), 750);
   }
 
   async function handleGoogle() {
@@ -120,7 +120,7 @@ function LoginPage() {
       return;
     }
     if (!("redirected" in result && result.redirected)) {
-      router.navigate({ to: "/" });
+      router.navigate({ to: destinationAfterAuth() });
     }
   }
 
@@ -362,9 +362,17 @@ function LoginPage() {
             Continuer avec Google
           </button>
 
+          <Link
+            to="/onboarding"
+            className="mt-4 flex h-14 w-full items-center justify-center gap-2 rounded-2xl font-display text-sm font-black uppercase tracking-widest text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            Ignorer la connexion
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
+
           <p className="mt-8 text-center text-sm font-semibold text-muted-foreground">
             Tu n&apos;as pas encore de compte ?{" "}
-            <Link to="/welcome" className="font-black text-primary underline-offset-4 hover:underline">
+            <Link to="/signup" className="font-black text-primary underline-offset-4 hover:underline">
               Créer un compte
             </Link>
           </p>
