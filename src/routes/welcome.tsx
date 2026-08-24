@@ -18,10 +18,10 @@ function Welcome() {
           Préserve. Apprends. Transmets.<br/>
           Commence ton aventure linguistique aujourd&apos;hui.
         </p>
-        <Link to="/onboarding" className="btn-3d mt-4 w-full bg-white text-primary font-display font-black py-4 rounded-2xl uppercase tracking-wider text-base" style={{ boxShadow: "0 4px 0 0 rgba(0,0,0,0.2)" }}>
+        <Link to="/login" className="btn-3d mt-4 w-full bg-white text-primary font-display font-black py-4 rounded-2xl uppercase tracking-wider text-base" style={{ boxShadow: "0 4px 0 0 rgba(0,0,0,0.2)" }}>
           Commencer gratuitement
         </Link>
-        <Link to="/" className="text-white/80 font-bold underline text-sm">J&apos;ai déjà un compte</Link>
+        <Link to="/login" className="text-white/80 font-bold underline text-sm">J&apos;ai déjà un compte</Link>
       </div>
     </div>
   );
