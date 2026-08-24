@@ -1,20 +1,32 @@
-# Page de connexion Kwabo — finalisation et intégration
+# Connexion après « Commencer gratuitement » + bouton « Ignorer la connexion »
 
-La page de connexion premium existe déjà (`/login`) : composition 50/50 sur desktop avec illustration africaine, formulaire centré sur mobile, logo Kwabo, « Bienvenue sur Kwabo 👋🏾 », « Content de te revoir ! », champs e-mail/mot de passe avec afficher/masquer, « Mot de passe oublié ? », bouton « Se connecter » avec états chargement/erreur/succès, séparateur « ou continuer avec », « Continuer avec Google », et la phrase « Apprendre une langue, c'est découvrir un monde. ». L'authentification est réelle (Lovable Cloud : e-mail/mot de passe + Google).
+La page de connexion premium existe (`/login`) mais elle n'est pas dans le parcours : le bouton « Commencer gratuitement » de l'écran de bienvenue saute directement à l'onboarding. Voici le nouveau parcours :
 
-Ce qui manque pour que ce soit réellement utilisable, et ce que je propose de faire :
+```text
+/welcome (Kwabo - écran de bienvenue)
+   └─ « Commencer gratuitement » ──► /login
+                                      ├─ « Se connecter » / Google ──► onboarding ou apprentissage
+                                      ├─ « Ignorer la connexion » ──► /onboarding (mode invité, comme aujourd'hui)
+                                      └─ « Créer un compte » ──► /signup
+```
 
-## 1. Placer la connexion dans le parcours
-- Depuis l'écran d'accueil `/welcome`, le lien « J'ai déjà un compte » mène aujourd'hui à la page principale. Il pointera vers `/login`.
-- Après une connexion réussie : redirection vers l'apprentissage (ou vers l'onboarding si l'utilisateur ne l'a pas encore terminé).
+## Changements
 
-## 2. Page d'inscription réelle
-Le lien « Créer un compte » renvoie actuellement vers l'écran de bienvenue, car aucune page d'inscription n'existe. Je crée `/signup`, strictement dans le même design que la connexion (même mise en page, même illustration, mêmes composants) : e-mail, mot de passe, création de compte réelle, message « vérifie ta boîte mail » si la confirmation e-mail est active, et « Continuer avec Google ».
+### 1. Écran de bienvenue (`src/routes/welcome.tsx`)
+- « Commencer gratuitement » pointe désormais vers `/login` au lieu de `/onboarding`.
+- Le lien « J'ai déjà un compte » pointe aussi vers `/login` (il renvoie aujourd'hui vers la page principale).
 
-## 3. Polissage de la page de connexion
-- Vérification des états : focus visible, messages d'erreur clairs (identifiants invalides, e-mail non confirmé), détection hors-ligne, succès animé.
-- Accessibilité : labels associés, `aria-invalid`, zones tactiles ≥ 44 px, respect de `prefers-reduced-motion`.
+### 2. Page de connexion (`src/routes/login.tsx`)
+- Ajout d'un bouton secondaire « Ignorer la connexion » sous les boutons principaux, qui mène à `/onboarding` : l'utilisateur peut utiliser Kwabo sans compte, exactement comme aujourd'hui (progression locale conservée).
+- Après une connexion réussie : si l'onboarding n'est pas terminé, on y renvoie l'utilisateur ; sinon direction l'apprentissage.
+
+### 3. Page d'inscription (`src/routes/signup.tsx`, nouvelle)
+Le lien « Créer un compte » renvoie actuellement vers l'écran de bienvenue car aucune page d'inscription n'existe. Je la crée avec exactement le même design que la connexion (même mise en page 50/50, même illustration, mêmes composants) : e-mail, mot de passe, création de compte réelle via Lovable Cloud, message « vérifie ta boîte mail » si la confirmation e-mail est active, « Continuer avec Google », et le même bouton « Ignorer la connexion ».
+
+### 4. Garde de navigation (`src/routes/__root.tsx`)
+- Ajout de `/signup` aux routes exemptées de la redirection automatique d'onboarding.
 
 ## Détails techniques
-- Routes touchées : `src/routes/login.tsx` (polissage), nouveau `src/routes/signup.tsx`, `src/routes/welcome.tsx` (un seul lien), `src/routes/__root.tsx` (ajouter `/signup` aux routes exemptées de la redirection d'onboarding).
-- Réutilisation de `src/assets/login-illustration.jpg`, des tokens de couleur existants et des polices Nunito/Display. Aucune nouvelle dépendance, aucun autre écran modifié.
+- Authentification réelle existante : Lovable Cloud (e-mail/mot de passe + Google), aucune nouvelle dépendance.
+- Le « mode invité » ne change rien au fonctionnement actuel : la progression reste en local sur l'appareil.
+- Couleurs, polices (Nunito/Display) et illustration africaine existantes réutilisées. Aucun autre écran n'est modifié.
