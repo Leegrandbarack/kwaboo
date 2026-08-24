@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -26,6 +27,11 @@ import { Route as LessonIdRouteImport } from './routes/lesson.$id'
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/shop': typeof ShopRoute
+  '/signup': typeof SignupRoute
   '/welcome': typeof WelcomeRoute
   '/lesson/$id': typeof LessonIdRoute
 }
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/shop': typeof ShopRoute
+  '/signup': typeof SignupRoute
   '/welcome': typeof WelcomeRoute
   '/lesson/$id': typeof LessonIdRoute
 }
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/shop': typeof ShopRoute
+  '/signup': typeof SignupRoute
   '/welcome': typeof WelcomeRoute
   '/lesson/$id': typeof LessonIdRoute
 }
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/shop'
+    | '/signup'
     | '/welcome'
     | '/lesson/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/shop'
+    | '/signup'
     | '/welcome'
     | '/lesson/$id'
   id:
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/shop'
+    | '/signup'
     | '/welcome'
     | '/lesson/$id'
   fileRoutesById: FileRoutesById
@@ -195,6 +207,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   ShopRoute: typeof ShopRoute
+  SignupRoute: typeof SignupRoute
   WelcomeRoute: typeof WelcomeRoute
   LessonIdRoute: typeof LessonIdRoute
 }
@@ -206,6 +219,13 @@ declare module '@tanstack/react-router' {
       path: '/welcome'
       fullPath: '/welcome'
       preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -307,6 +327,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   ShopRoute: ShopRoute,
+  SignupRoute: SignupRoute,
   WelcomeRoute: WelcomeRoute,
   LessonIdRoute: LessonIdRoute,
 }
