@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Flame, Trophy, BookOpen, Calendar, Volume2, VolumeX, RotateCcw, Award } from "lucide-react";
+import { Flame, Trophy, BookOpen, Calendar, Award, Settings } from "lucide-react";
 import { useProgress } from "@/lib/progress";
 import { BottomNav } from "@/components/home/BottomNav";
 import { LANGUAGES } from "@/components/LanguageSheet";
