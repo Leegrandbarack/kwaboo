@@ -14,7 +14,7 @@ export const Route = createFileRoute("/profile")({
 const AVATARS = ["🧑🏾", "👨🏾", "👩🏾", "🧑🏿", "👨🏿", "👩🏿", "🦁", "🐘", "🐆", "🦓", "🦒", "🦅"];
 
 function ProfilePage() {
-  const { progress, update, reset } = useProgress();
+  const { progress, update } = useProgress();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(progress.username);
   const level = Math.floor(progress.xp / 100) + 1;
