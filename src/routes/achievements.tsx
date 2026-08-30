@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { Check } from "lucide-react";
 import { useProgress } from "@/lib/progress";
 import { achievements, checkAchievements } from "@/lib/achievements";
-import { TopBar } from "@/components/home/TopBar";
 import { BottomNav } from "@/components/home/BottomNav";
 
 export const Route = createFileRoute("/achievements")({
@@ -22,8 +21,7 @@ function AchievementsPage() {
 
   return (
     <div className="min-h-dvh bg-background">
-      <TopBar />
-      <main className="max-w-2xl mx-auto pb-32 px-4">
+      <main className="max-w-2xl mx-auto pb-32 px-4 pt-6">
         <div className="mt-4 rounded-3xl bg-gradient-hero text-white p-5 text-center shadow-card">
           <div className="text-5xl">🏆</div>
           <div className="font-display font-black text-2xl mt-1">{unlockedCount} / {achievements.length}</div>

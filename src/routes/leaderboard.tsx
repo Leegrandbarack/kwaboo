@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useProgress } from "@/lib/progress";
 import { getWeeklyLeaderboard, getLeague, LEAGUES } from "@/lib/leaderboard";
-import { TopBar } from "@/components/home/TopBar";
 import { BottomNav } from "@/components/home/BottomNav";
 
 export const Route = createFileRoute("/leaderboard")({
@@ -21,8 +20,7 @@ function LeaderboardPage() {
 
   return (
     <div className="min-h-dvh bg-background">
-      <TopBar />
-      <main className="max-w-2xl mx-auto pb-32 px-4">
+      <main className="max-w-2xl mx-auto pb-32 px-4 pt-6">
         <div className="mt-4 rounded-3xl bg-gradient-hero text-white p-5 text-center shadow-card rise-in">
           <div className="text-5xl mb-1">{league.emoji}</div>
           <div className="font-display font-black text-2xl">Ligue {league.name}</div>

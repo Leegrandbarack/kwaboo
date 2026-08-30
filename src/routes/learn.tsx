@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LearningPath } from "@/components/LearningPath";
-import { TopBar } from "@/components/home/TopBar";
 import { BottomNav } from "@/components/home/BottomNav";
 
 export const Route = createFileRoute("/learn")({
@@ -11,8 +10,7 @@ export const Route = createFileRoute("/learn")({
 function LearnPage() {
   return (
     <div className="min-h-dvh bg-background">
-      <TopBar />
-      <main className="max-w-2xl mx-auto pb-32">
+      <main className="max-w-2xl mx-auto pb-32 pt-4">
         <div className="px-4 pt-4">
           <h1 className="font-display font-black text-2xl">Ton parcours Fɔngbè</h1>
           <p className="text-sm text-muted-foreground font-bold">Sections, unités et leçons : avance pas à pas.</p>
