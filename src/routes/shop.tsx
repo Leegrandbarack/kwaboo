@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Heart, Snowflake, Zap, Shirt, Gem } from "lucide-react";
 import { useProgress, MAX_HEARTS, HEART_REFILL_COST } from "@/lib/progress";
-import { TopBar } from "@/components/home/TopBar";
 import { BottomNav } from "@/components/home/BottomNav";
 
 export const Route = createFileRoute("/shop")({
@@ -37,7 +36,6 @@ function ShopPage() {
 
   return (
     <div className="min-h-dvh bg-background">
-      <TopBar />
       <main className="max-w-2xl mx-auto pb-32 px-4">
         <div className="mt-4 rounded-3xl bg-gradient-to-br from-gold to-coral text-white p-5 text-center shadow-card">
           <div className="flex items-center justify-center gap-2 font-display font-black text-3xl"><Gem /> {progress.gems}</div>

@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Heart, MessageCircle, Sparkles } from "lucide-react";
-import { TopBar } from "@/components/home/TopBar";
 import { BottomNav } from "@/components/home/BottomNav";
 
 export const Route = createFileRoute("/community")({
@@ -22,7 +21,6 @@ function CommunityPage() {
   const [likes, setLikes] = useState<Record<number, boolean>>({});
   return (
     <div className="min-h-dvh bg-background">
-      <TopBar />
       <main className="max-w-2xl mx-auto pb-32 px-4">
         <div className="mt-4 rounded-3xl bg-gradient-hero text-white p-5 shadow-card">
           <div className="flex items-center gap-2">

@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LearningPath } from "@/components/LearningPath";
-import { TopBar } from "@/components/home/TopBar";
 import { HeroCard } from "@/components/home/HeroCard";
 import { MotivationCards } from "@/components/home/MotivationCards";
 import { CultureCard } from "@/components/home/CultureCard";
@@ -37,7 +36,6 @@ function Home() {
         className="pointer-events-none absolute top-64 -left-32 w-72 h-72 rounded-full bg-gold/15 blur-3xl"
       />
 
-      <TopBar />
       <main className="max-w-2xl mx-auto pb-32 relative">
         <HeroCard />
         <MotivationCards />

@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Flame, Trophy, BookOpen, Calendar, Volume2, VolumeX, RotateCcw, Award } from "lucide-react";
 import { useProgress } from "@/lib/progress";
-import { TopBar } from "@/components/home/TopBar";
 import { BottomNav } from "@/components/home/BottomNav";
 import { LANGUAGES } from "@/components/LanguageSheet";
 import { allLessons } from "@/lib/curriculum";
@@ -24,7 +23,6 @@ function ProfilePage() {
 
   return (
     <div className="min-h-dvh bg-background">
-      <TopBar />
       <main className="max-w-2xl mx-auto pb-32 px-4">
         <section className="mt-4 rounded-3xl bg-gradient-hero text-white p-5 text-center shadow-card">
           <div className="text-6xl mb-2">{progress.avatar}</div>
