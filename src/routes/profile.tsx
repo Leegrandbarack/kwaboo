@@ -70,18 +70,15 @@ function ProfilePage() {
           <span className="text-muted-foreground">→</span>
         </Link>
 
-        <h2 className="font-display font-black text-lg mt-6 mb-2">Réglages</h2>
-        <div className="space-y-2">
-          <button onClick={() => update({ soundEnabled: !progress.soundEnabled })} className="w-full flex items-center gap-3 p-4 rounded-2xl bg-card border-2 border-border">
-            {progress.soundEnabled ? <Volume2 /> : <VolumeX />}
-            <div className="flex-1 text-left font-bold">Sons</div>
-            <span className={`text-xs font-black px-3 py-1 rounded-full ${progress.soundEnabled ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{progress.soundEnabled ? "ACTIVÉS" : "DÉSACTIVÉS"}</span>
-          </button>
-          <button onClick={() => { if (confirm("Réinitialiser toute ta progression ?")) reset(); }} className="w-full flex items-center gap-3 p-4 rounded-2xl bg-card border-2 border-destructive/40 text-destructive">
-            <RotateCcw />
-            <div className="flex-1 text-left font-bold">Réinitialiser ma progression</div>
-          </button>
-        </div>
+        <Link to="/parametres" className="press mt-3 flex items-center gap-3 p-4 rounded-2xl bg-card border-2 border-border">
+          <div className="w-10 h-10 grid place-items-center bg-primary/10 text-primary rounded-xl"><Settings className="w-5 h-5" /></div>
+          <div className="flex-1">
+            <div className="font-display font-black">Paramètres</div>
+            <div className="text-xs text-muted-foreground font-bold">Stats, langue, sons et progression</div>
+          </div>
+          <span className="text-muted-foreground">→</span>
+        </Link>
+
       </main>
       <BottomNav active="profile" />
     </div>
