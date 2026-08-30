@@ -21,7 +21,7 @@ function CommunityPage() {
   const [likes, setLikes] = useState<Record<number, boolean>>({});
   return (
     <div className="min-h-dvh bg-background">
-      <main className="max-w-2xl mx-auto pb-32 px-4">
+      <main className="max-w-2xl mx-auto pb-32 px-4 pt-6">
         <div className="mt-4 rounded-3xl bg-gradient-hero text-white p-5 shadow-card">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5" />

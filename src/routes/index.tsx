@@ -36,7 +36,7 @@ function Home() {
         className="pointer-events-none absolute top-64 -left-32 w-72 h-72 rounded-full bg-gold/15 blur-3xl"
       />
 
-      <main className="max-w-2xl mx-auto pb-32 relative">
+      <main className="max-w-2xl mx-auto pb-32 pt-4 relative">
         <HeroCard />
         <MotivationCards />
         <AyiTip />

@@ -36,7 +36,7 @@ function ShopPage() {
 
   return (
     <div className="min-h-dvh bg-background">
-      <main className="max-w-2xl mx-auto pb-32 px-4">
+      <main className="max-w-2xl mx-auto pb-32 px-4 pt-6">
         <div className="mt-4 rounded-3xl bg-gradient-to-br from-gold to-coral text-white p-5 text-center shadow-card">
           <div className="flex items-center justify-center gap-2 font-display font-black text-3xl"><Gem /> {progress.gems}</div>
           <p className="text-sm font-bold opacity-90 mt-1">Gemmes disponibles</p>
