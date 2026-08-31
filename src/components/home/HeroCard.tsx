@@ -13,8 +13,8 @@ export function HeroCard() {
   const dailyPct = Math.min(100, Math.round((todayXp / progress.dailyGoal) * 100));
 
   return (
-    <section className="mx-4 mt-4 rise-in">
-      <div className="relative overflow-hidden rounded-[28px] bg-gradient-hero text-white p-6 shadow-card">
+    <section className="mx-4 lg:mx-0 mt-4 lg:mt-0 rise-in">
+      <div className="relative overflow-hidden rounded-[28px] bg-gradient-hero text-white p-5 sm:p-6 shadow-card">
         {/* Decorative layers */}
         <div
           className="absolute inset-0 opacity-[0.12] pointer-events-none mix-blend-overlay"
@@ -71,7 +71,7 @@ export function HeroCard() {
           <Link
             to="/lesson/$id"
             params={{ id: next.id }}
-            className="btn-3d mt-6 w-full bg-gold text-gold-foreground font-display font-black px-6 py-4 rounded-2xl uppercase tracking-wider flex items-center justify-center gap-2 text-base"
+            className="btn-3d mt-6 w-full sm:w-auto sm:min-w-[280px] bg-gold text-gold-foreground font-display font-black px-6 py-4 rounded-2xl uppercase tracking-wider inline-flex items-center justify-center gap-2 text-base"
           >
             Continuer la leçon
             <ArrowRight className="w-5 h-5" strokeWidth={3} />
