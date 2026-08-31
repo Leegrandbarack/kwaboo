@@ -13,8 +13,8 @@ export function HeroCard() {
   const dailyPct = Math.min(100, Math.round((todayXp / progress.dailyGoal) * 100));
 
   return (
-    <section className="mx-4 lg:mx-0 mt-4 lg:mt-0 rise-in">
-      <div className="relative overflow-hidden rounded-[28px] bg-gradient-hero text-white p-5 sm:p-6 shadow-card">
+    <section className="rise-in">
+      <div className="relative overflow-hidden rounded-[28px] bg-gradient-hero text-white p-6 sm:p-7 lg:p-8 shadow-card">
         {/* Decorative layers */}
         <div
           className="absolute inset-0 opacity-[0.12] pointer-events-none mix-blend-overlay"
@@ -33,15 +33,15 @@ export function HeroCard() {
             <Sparkles className="w-3 h-3" /> Niveau {level}
           </div>
 
-          <h1 className="font-display font-black text-[26px] leading-[1.1] mt-3">
+          <h1 className="font-display font-black text-[28px] sm:text-[32px] lg:text-[36px] leading-[1.05] tracking-tight mt-3">
             Bonjour {progress.username}
             <span className="inline-block ayi-float ml-1">👋</span>
           </h1>
-          <p className="font-medium text-white/85 mt-1 text-sm">
+          <p className="font-semibold text-white/80 mt-2 text-sm sm:text-base max-w-[46ch]">
             Prêt à apprendre le Fɔngbè aujourd&apos;hui&nbsp;?
           </p>
 
-          <div className="mt-5">
+          <div className="mt-6">
             <div className="flex items-center justify-between text-[11px] font-black mb-1.5 uppercase tracking-wider">
               <span className="opacity-90">Progression</span>
               <span className="opacity-90 tabular-nums">{levelProgress}/100 XP</span>
@@ -54,7 +54,7 @@ export function HeroCard() {
             </div>
           </div>
 
-          <div className="mt-4 flex items-center gap-2 text-[11px] font-black uppercase tracking-wider">
+          <div className="mt-5 flex items-center gap-2 text-[11px] font-black uppercase tracking-wider">
             <Target className="w-3.5 h-3.5" />
             <span className="opacity-90">Objectif du jour</span>
             <span className="ml-auto tabular-nums">
@@ -71,7 +71,7 @@ export function HeroCard() {
           <Link
             to="/lesson/$id"
             params={{ id: next.id }}
-            className="btn-3d mt-6 w-full sm:w-auto sm:min-w-[280px] bg-gold text-gold-foreground font-display font-black px-6 py-4 rounded-2xl uppercase tracking-wider inline-flex items-center justify-center gap-2 text-base"
+            className="btn-3d mt-7 w-full sm:w-auto sm:min-w-[268px] bg-gold text-gold-foreground font-display font-black px-7 py-4 rounded-2xl uppercase tracking-[0.08em] inline-flex items-center justify-center gap-2 text-[15px]"
           >
             Continuer la leçon
             <ArrowRight className="w-5 h-5" strokeWidth={3} />

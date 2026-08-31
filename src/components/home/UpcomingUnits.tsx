@@ -12,22 +12,22 @@ const UPCOMING = [
 
 export function UpcomingUnits() {
   return (
-    <section className="mt-10">
-      <div className="mx-4 rounded-3xl bg-gradient-to-br from-muted/70 to-muted/30 border border-dashed border-border px-5 py-4 mb-6 text-center">
+    <section>
+      <div className="rounded-3xl bg-gradient-to-br from-muted/70 to-muted/30 border border-dashed border-border px-5 py-5 mb-8 text-center">
         <div className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
           <Sparkles className="w-3 h-3" /> Bientôt disponible
         </div>
-        <h2 className="font-display font-black text-lg mt-1">
+        <h2 className="font-display font-black text-xl tracking-tight mt-1.5">
           Encore 7 mondes à explorer
         </h2>
-        <p className="text-xs text-muted-foreground font-medium mt-0.5">
+        <p className="text-[13px] text-muted-foreground font-semibold mt-1">
           Termine ton parcours actuel pour les débloquer
         </p>
       </div>
 
       <div className="flex flex-col items-center gap-5 stagger-rise">
         {UPCOMING.map((u, i) => {
-          const offset = [0, 60, 90, 60, 0, -60, -90][i % 7];
+          const offset = [0, 48, 72, 48, 0, -48, -72][i % 7];
           return (
             <div
               key={u.n}
