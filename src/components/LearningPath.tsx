@@ -45,7 +45,7 @@ export function LearningPath() {
                         const done = progress.completed.includes(l.id);
                         const active = globalIdx === activeIdx;
                         const locked = globalIdx > activeIdx;
-                        const offset = [0, 60, 90, 60, 0, -60, -90, -60][globalIdx % 8];
+                        const offset = [0, 48, 72, 48, 0, -48, -72, -48][globalIdx % 8];
                         return (
                           <div key={l.id} style={{ transform: `translateX(${offset}px)` }}>
                             <LessonNode

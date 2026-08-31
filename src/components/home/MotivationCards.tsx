@@ -63,14 +63,14 @@ export function MotivationCards() {
   } as const;
 
   return (
-    <section className="mt-5 px-4">
-      <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 snap-x snap-mandatory scrollbar-none">
+    <section className="mt-5 px-4 lg:px-0">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
         {cards.map((c, i) => {
           const s = toneStyles[c.tone];
           return (
             <article
               key={i}
-              className={`snap-start shrink-0 w-[46%] max-w-[190px] rounded-2xl p-3.5 border shadow-card lift ${s.wrap}`}
+              className={`h-full rounded-2xl p-3.5 border shadow-card lift ${s.wrap}`}
             >
               <div className="flex items-center gap-2">
                 <div className={`w-9 h-9 rounded-xl grid place-items-center shadow-sm ${s.icon}`}>
