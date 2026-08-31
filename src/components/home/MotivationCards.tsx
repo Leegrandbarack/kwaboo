@@ -63,7 +63,7 @@ export function MotivationCards() {
   } as const;
 
   return (
-    <section className="mt-5 px-4 lg:px-0">
+    <section>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
         {cards.map((c, i) => {
           const s = toneStyles[c.tone];
