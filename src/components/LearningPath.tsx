@@ -45,7 +45,7 @@ export function LearningPath() {
                         const done = progress.completed.includes(l.id);
                         const active = globalIdx === activeIdx;
                         const locked = globalIdx > activeIdx;
-                        const offset = [0, 60, 90, 60, 0, -60, -90, -60][globalIdx % 8];
+                        const offset = [0, 48, 72, 48, 0, -48, -72, -48][globalIdx % 8];
                         return (
                           <div key={l.id} style={{ transform: `translateX(${offset}px)` }}>
                             <LessonNode
@@ -89,7 +89,7 @@ function SectionHeader({
       : "bg-coral text-coral-foreground";
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   return (
-    <div className={`mx-4 rounded-3xl ${bg} px-5 py-4 shadow-card`}>
+    <div className={`mx-4 lg:mx-0 rounded-3xl ${bg} px-5 py-4 shadow-card`}>
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <div className="text-xs font-bold opacity-80 uppercase tracking-wider">
@@ -132,7 +132,7 @@ function UnitHeader({
   const line =
     color === "primary" ? "bg-primary/20" : color === "gold" ? "bg-gold/25" : "bg-coral/25";
   return (
-    <div className="mx-4 flex items-center gap-3">
+    <div className="mx-4 lg:mx-0 flex items-center gap-3">
       <div className={`h-px flex-1 ${line}`} />
       <div className="text-center">
         <div className={`text-[10px] font-black uppercase tracking-widest ${accent}`}>
