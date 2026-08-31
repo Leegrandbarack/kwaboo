@@ -12,7 +12,7 @@ const tabs = [
 export function BottomNav({ active = "home" }: { active?: string }) {
   const activeIdx = Math.max(0, tabs.findIndex((t) => t.id === active));
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 bg-background/85 backdrop-blur-xl border-t border-border/60">
+    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-background/85 backdrop-blur-xl border-t border-border/60">
       <div className="max-w-2xl mx-auto px-2 py-1.5 relative">
         {/* Sliding pill indicator */}
         <div
