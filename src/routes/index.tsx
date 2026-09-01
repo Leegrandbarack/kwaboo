@@ -3,7 +3,6 @@ import { HeroCard } from "@/components/home/HeroCard";
 import { MotivationCards } from "@/components/home/MotivationCards";
 import { CultureCard } from "@/components/home/CultureCard";
 import { AyiTip } from "@/components/home/AyiTip";
-import { UpcomingUnits } from "@/components/home/UpcomingUnits";
 import { BottomNav } from "@/components/home/BottomNav";
 import { BrandHeader } from "@/components/home/BrandHeader";
 
