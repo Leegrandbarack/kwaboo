@@ -51,10 +51,6 @@ function Home() {
         <div className="mt-6">
           <CultureCard />
         </div>
-
-        <div className="mt-10">
-          <UpcomingUnits />
-        </div>
       </main>
 
       <BottomNav active="home" />
