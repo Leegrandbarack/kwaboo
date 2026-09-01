@@ -299,4 +299,11 @@
   .ring-progress {
     transition: stroke-dashoffset 0.6s var(--ease-out-soft);
   }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }

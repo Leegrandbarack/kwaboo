@@ -2,7 +2,7 @@ import { Sparkles, ArrowRight } from "lucide-react";
 
 export function CultureCard() {
   return (
-    <section>
+    <section className="mx-4">
       <article className="relative overflow-hidden rounded-3xl border border-border/60 p-5 shadow-card bg-card">
         {/* Culture pattern background */}
         <div

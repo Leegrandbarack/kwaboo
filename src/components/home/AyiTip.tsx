@@ -18,7 +18,7 @@ export function AyiTip() {
   }, []);
 
   return (
-    <section>
+    <section className="mx-4">
       <div className="flex items-end gap-3">
         <div className="shrink-0">
           <Ayi size={68} mood="thinking" />
