@@ -13,7 +13,7 @@ export function HeroCard() {
   const dailyPct = Math.min(100, Math.round((todayXp / progress.dailyGoal) * 100));
 
   return (
-    <section className="rise-in">
+    <section className="rise-in mx-4">
       <div className="relative overflow-hidden rounded-[28px] bg-gradient-hero text-white p-6 shadow-card">
         {/* Decorative layers */}
         <div

@@ -38,7 +38,7 @@ function Home() {
 
       <BrandHeader />
 
-      <main className="relative max-w-2xl mx-auto px-4 pt-4 pb-32">
+      <main className="relative max-w-2xl mx-auto pt-4 pb-32">
         <HeroCard />
 
         <div className="mt-6">
