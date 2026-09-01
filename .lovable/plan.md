@@ -31,6 +31,6 @@ Couleurs, typographie, contenu des leçons, progression, cœurs/gemmes et toutes
 - Nouveau `src/components/home/BrandHeader.tsx` : `Ayi` + « KWABO », `sticky top-0 z-30`, réutilisable.
 - `src/components/home/BottomNav.tsx` : retrait de `lg:hidden`.
 - `src/components/home/{HeroCard,MotivationCards,AyiTip,CultureCard,UpcomingUnits}.tsx` : retour aux marges/espacements d'origine (`mx-4`, `mt-*`) et au défilement horizontal des cartes de motivation.
-- `src/components/LearningPath.tsx` : retour aux décalages `[0, 60, 90, 60, 0, -60, -90, -60]` et aux marges d'origine.
+- `src/components/LearningPath.tsx` : pas de changement nécessaire sur ce composant ; il continue d'être utilisé par `/learn`.
 - `src/components/home/SideNav.tsx` : supprimé s'il n'est plus utilisé ailleurs.
 - Vérification visuelle desktop + mobile via Playwright après les changements.
