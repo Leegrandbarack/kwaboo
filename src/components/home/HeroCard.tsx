@@ -14,7 +14,7 @@ export function HeroCard() {
 
   return (
     <section className="rise-in">
-      <div className="relative overflow-hidden rounded-[28px] bg-gradient-hero text-white p-6 sm:p-7 lg:p-8 shadow-card">
+      <div className="relative overflow-hidden rounded-[28px] bg-gradient-hero text-white p-6 shadow-card">
         {/* Decorative layers */}
         <div
           className="absolute inset-0 opacity-[0.12] pointer-events-none mix-blend-overlay"
