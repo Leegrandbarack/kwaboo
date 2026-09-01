@@ -9,8 +9,9 @@
 
 ### 1. Restaurer la mise en page d'origine
 
-- L'accueil redevient une colonne unique centrée (largeur max ~2xl) : bannière d'accueil, cartes de motivation, astuce d'AYI, carte Culture Fon, titre « Ton parcours », le parcours de leçons, puis les mondes à venir.
+- L'accueil redevient une colonne unique centrée (largeur max ~2xl) : bannière d'accueil, cartes de motivation, astuce d'AYI, carte Culture Fon, puis les mondes à venir.
 - Suppression du menu latéral desktop et de la colonne de droite : plus de découpage en 3 zones.
+- L'arbre de parcours de leçons (`LearningPath`) sort de l'accueil : il reste accessible via l'onglet « Apprendre » (`/learn`).
 - La barre de navigation du bas redevient visible sur tous les écrans (plus de `lg:hidden`).
 - Les marges horizontales d'origine reviennent sur les sections (cartes, AYI, culture, en-têtes), ainsi que les décalages d'origine du parcours de leçons.
 - Les cartes de motivation reprennent leur affichage d'origine sur une ligne défilante horizontale.
@@ -30,6 +31,6 @@ Couleurs, typographie, contenu des leçons, progression, cœurs/gemmes et toutes
 - Nouveau `src/components/home/BrandHeader.tsx` : `Ayi` + « KWABO », `sticky top-0 z-30`, réutilisable.
 - `src/components/home/BottomNav.tsx` : retrait de `lg:hidden`.
 - `src/components/home/{HeroCard,MotivationCards,AyiTip,CultureCard,UpcomingUnits}.tsx` : retour aux marges/espacements d'origine (`mx-4`, `mt-*`) et au défilement horizontal des cartes de motivation.
-- `src/components/LearningPath.tsx` : retour aux décalages `[0, 60, 90, 60, 0, -60, -90, -60]` et aux marges d'origine.
+- `src/components/LearningPath.tsx` : pas de changement nécessaire sur ce composant ; il continue d'être utilisé par `/learn`.
 - `src/components/home/SideNav.tsx` : supprimé s'il n'est plus utilisé ailleurs.
 - Vérification visuelle desktop + mobile via Playwright après les changements.
