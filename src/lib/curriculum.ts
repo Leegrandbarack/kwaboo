@@ -1689,3 +1689,22 @@ export const pathLessons = sections.flatMap((s) =>
       .map((l) => ({ ...l, sectionId: s.id, unitId: u.id, color: s.color }))
   )
 );
+
+/** Leçons d'une unité, dans l'ordre. */
+export function unitLessons(unit: Unit) {
+  return unit.lessonIds
+    .map((id) => lessonById.get(id))
+    .filter((l): l is (typeof allLessons)[number] => !!l);
+}
+
+/** Parcours regroupés par niveau : Débutant, Intermédiaire, Avancé. */
+export const levelTracks: { level: Level; label: string; sections: Section[] }[] = (
+  ["beginner", "intermediate", "advanced"] as Level[]
+).map((level) => ({
+  level,
+  label: LEVEL_LABEL[level],
+  sections: sections.filter((s) => s.level === level),
+}));
+
+/** Toutes les unités à plat, dans l'ordre pédagogique. */
+export const allUnits = sections.flatMap((s) => s.units.map((u) => ({ ...u, section: s })));
