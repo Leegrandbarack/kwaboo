@@ -3,10 +3,13 @@ import { useNavigate, Link } from "@tanstack/react-router";
 import { X, Check, Lightbulb, Heart } from "lucide-react";
 import type { Exercise } from "@/lib/curriculum";
 import { useProgress } from "@/lib/progress";
+import { recordMistake } from "@/lib/review";
 import { Ayi, AyiBubble } from "@/components/Ayi";
 import { Confetti } from "@/components/Confetti";
 import { QuitLessonDialog } from "@/components/QuitLessonDialog";
+import { SpeakButton } from "@/components/SpeakButton";
 import { sound } from "@/lib/sound";
+
 
 type Props = {
   lessonId: string;
