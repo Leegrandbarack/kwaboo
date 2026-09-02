@@ -1434,11 +1434,23 @@ export function getLesson(id: string) {
 // Les leçons ci-dessous référencent les ids définis dans `worlds`.
 // ---------------------------------------------------------------------------
 
+export type Level = "beginner" | "intermediate" | "advanced";
+
+export const LEVEL_LABEL: Record<Level, string> = {
+  beginner: "Débutant",
+  intermediate: "Intermédiaire",
+  advanced: "Avancé",
+};
+
 export type Unit = {
   id: string;
   title: string;
   titleFon: string;
   emoji: string;
+  /** Objectif pédagogique affiché sur la carte d'unité */
+  objective: string;
+  /** Récompense obtenue à la fin de l'unité */
+  reward: { badge: string; label: string; xp: number };
   lessonIds: string[];
 };
 
@@ -1448,9 +1460,11 @@ export type Section = {
   titleFon: string;
   subtitle: string;
   emoji: string;
+  level: Level;
   color: "primary" | "gold" | "coral";
   units: Unit[];
 };
+
 
 export const sections: Section[] = [
   {
