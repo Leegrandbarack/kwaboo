@@ -55,8 +55,15 @@ export function ExercisePlayer({ lessonId, lessonTitle, exercises }: Props) {
       sound.wrong();
       setMistakes((m) => m + 1);
       loseHeart();
+      recordMistake({
+        question: questionText(ex),
+        answer: correctText(ex),
+        lessonId,
+        lessonTitle,
+      });
     }
   }
+
 
   function next() {
     setChecked(false);
