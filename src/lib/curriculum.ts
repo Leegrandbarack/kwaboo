@@ -2,7 +2,16 @@ export type Exercise =
   | { type: "choice"; prompt: string; question: string; options: string[]; answer: string; hint?: string }
   | { type: "translate"; prompt: string; from: string; to: string; answer: string; choices: string[] }
   | { type: "order"; prompt: string; french: string; words: string[]; answer: string[] }
-  | { type: "match"; prompt: string; pairs: { fr: string; fon: string }[] };
+  | { type: "match"; prompt: string; pairs: { fr: string; fon: string }[] }
+  /** Compléter une phrase à trou (le trou est marqué par ___) */
+  | { type: "fill"; prompt: string; sentence: string; translation?: string; options: string[]; answer: string }
+  /** Écouter puis choisir la bonne réponse */
+  | { type: "listen"; prompt: string; audioText: string; question: string; options: string[]; answer: string }
+  /** Écrire une réponse courte */
+  | { type: "write"; prompt: string; question: string; answer: string; accept?: string[]; hint?: string }
+  /** Associer un mot à une image (illustration emoji) */
+  | { type: "image"; prompt: string; question: string; options: { emoji: string; label: string }[]; answer: string };
+
 
 export type Lesson = {
   id: string;
