@@ -3,10 +3,13 @@ import { useNavigate, Link } from "@tanstack/react-router";
 import { X, Check, Lightbulb, Heart } from "lucide-react";
 import type { Exercise } from "@/lib/curriculum";
 import { useProgress } from "@/lib/progress";
+import { recordMistake } from "@/lib/review";
 import { Ayi, AyiBubble } from "@/components/Ayi";
 import { Confetti } from "@/components/Confetti";
 import { QuitLessonDialog } from "@/components/QuitLessonDialog";
+import { SpeakButton } from "@/components/SpeakButton";
 import { sound } from "@/lib/sound";
+
 
 type Props = {
   lessonId: string;
@@ -55,8 +58,15 @@ export function ExercisePlayer({ lessonId, lessonTitle, exercises }: Props) {
       sound.wrong();
       setMistakes((m) => m + 1);
       loseHeart();
+      recordMistake({
+        question: questionText(ex),
+        answer: correctText(ex),
+        lessonId,
+        lessonTitle,
+      });
     }
   }
+
 
   function next() {
     setChecked(false);

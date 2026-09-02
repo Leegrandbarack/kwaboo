@@ -2,7 +2,16 @@ export type Exercise =
   | { type: "choice"; prompt: string; question: string; options: string[]; answer: string; hint?: string }
   | { type: "translate"; prompt: string; from: string; to: string; answer: string; choices: string[] }
   | { type: "order"; prompt: string; french: string; words: string[]; answer: string[] }
-  | { type: "match"; prompt: string; pairs: { fr: string; fon: string }[] };
+  | { type: "match"; prompt: string; pairs: { fr: string; fon: string }[] }
+  /** Compléter une phrase à trou (le trou est marqué par ___) */
+  | { type: "fill"; prompt: string; sentence: string; translation?: string; options: string[]; answer: string }
+  /** Écouter puis choisir la bonne réponse */
+  | { type: "listen"; prompt: string; audioText: string; question: string; options: string[]; answer: string }
+  /** Écrire une réponse courte */
+  | { type: "write"; prompt: string; question: string; answer: string; accept?: string[]; hint?: string }
+  /** Associer un mot à une image (illustration emoji) */
+  | { type: "image"; prompt: string; question: string; options: { emoji: string; label: string }[]; answer: string };
+
 
 export type Lesson = {
   id: string;
@@ -1186,6 +1195,228 @@ export const worlds: World[] = [
   },
 ];
 
+// ---------------------------------------------------------------------------
+// Monde 5 — Vie quotidienne (chiffres, marché, voyages, conversations)
+// Utilise les nouveaux types d'exercices : image, fill, listen, write.
+// ---------------------------------------------------------------------------
+
+const world5: World = {
+  id: "w5",
+  title: "Vie quotidienne",
+  subtitle: "Chiffres, marché, voyages et conversations",
+  emoji: "🛍️",
+  color: "gold",
+  lessons: [
+    {
+      id: "w5l1",
+      title: "Les chiffres 1 à 5",
+      emoji: "🔢",
+      exercises: [
+        {
+          type: "choice",
+          prompt: "Nouveau mot",
+          question: "Comment dit-on « un » en Fon ?",
+          options: ["ɖokpó", "wè", "atɔn", "wǒ"],
+          answer: "ɖokpó",
+          hint: "ɖokpó = 1, wè = 2, atɔn = 3.",
+        },
+        {
+          type: "image",
+          prompt: "Associe le mot à l'image",
+          question: "atɔn",
+          options: [
+            { emoji: "1️⃣", label: "ɖokpó" },
+            { emoji: "2️⃣", label: "wè" },
+            { emoji: "3️⃣", label: "atɔn" },
+            { emoji: "5️⃣", label: "atɔɔn" },
+          ],
+          answer: "atɔn",
+        },
+        {
+          type: "listen",
+          prompt: "Écoute et choisis",
+          audioText: "atɔɔn",
+          question: "Quel chiffre entends-tu ?",
+          options: ["2", "3", "4", "5"],
+          answer: "5",
+        },
+        {
+          type: "fill",
+          prompt: "Complète la phrase",
+          sentence: "Un mɔ̀ ___ mɛ. (J'ai vu deux personnes.)",
+          translation: "wè = deux",
+          options: ["ɖokpó", "wè", "atɔn", "ɛnɛ"],
+          answer: "wè",
+        },
+        {
+          type: "write",
+          prompt: "Écris ta réponse",
+          question: "Écris « quatre » en Fon.",
+          answer: "ɛnɛ",
+          accept: ["enɛ", "ene", "ɛnɛ"],
+          hint: "Ça s'écrit avec deux ɛ.",
+        },
+      ],
+    },
+    {
+      id: "w5l2",
+      title: "Au marché",
+      emoji: "🧺",
+      exercises: [
+        {
+          type: "choice",
+          prompt: "Nouveau mot",
+          question: "Comment dit-on « marché » en Fon ?",
+          options: ["axi", "xwé", "ali", "sin"],
+          answer: "axi",
+          hint: "Le grand marché de Cotonou : Dantokpa.",
+        },
+        {
+          type: "image",
+          prompt: "Associe le mot à l'image",
+          question: "sìn (eau)",
+          options: [
+            { emoji: "💧", label: "sìn" },
+            { emoji: "🍚", label: "wɔ̌" },
+            { emoji: "🐟", label: "hweví" },
+            { emoji: "🍌", label: "kwékwé" },
+          ],
+          answer: "sìn",
+        },
+        {
+          type: "fill",
+          prompt: "Complète la phrase",
+          sentence: "Nǔ élɔ́ xɔ ___ ? (Combien coûte ceci ?)",
+          translation: "nabí = combien",
+          options: ["nabí", "akwɛ́", "fítɛ́", "mɛ̌"],
+          answer: "nabí",
+        },
+        {
+          type: "listen",
+          prompt: "Écoute et choisis",
+          audioText: "akwɛ́",
+          question: "Que signifie ce mot ?",
+          options: ["Argent", "Eau", "Route", "Maison"],
+          answer: "Argent",
+        },
+        {
+          type: "order",
+          prompt: "Reconstruis la phrase",
+          french: "Je vais au marché.",
+          words: ["Un", "yì", "axi", "mɛ"],
+          answer: ["Un", "yì", "axi", "mɛ"],
+        },
+        {
+          type: "write",
+          prompt: "Écris ta réponse",
+          question: "Écris « marché » en Fon.",
+          answer: "axi",
+        },
+      ],
+    },
+    {
+      id: "w5l3",
+      title: "Les voyages",
+      emoji: "🚌",
+      exercises: [
+        {
+          type: "choice",
+          prompt: "Nouveau mot",
+          question: "Comment dit-on « route / chemin » en Fon ?",
+          options: ["ali", "axi", "xwé", "hwenu"],
+          answer: "ali",
+        },
+        {
+          type: "image",
+          prompt: "Associe le mot à l'image",
+          question: "mɔ̌to",
+          options: [
+            { emoji: "🚗", label: "mɔ̌to" },
+            { emoji: "🚲", label: "kɛ̀kɛ́" },
+            { emoji: "✈️", label: "jɔhɔ̀nmɛhun" },
+            { emoji: "🛶", label: "tɔjihun" },
+          ],
+          answer: "mɔ̌to",
+        },
+        {
+          type: "fill",
+          prompt: "Complète la phrase",
+          sentence: "A na yì ___ ? (Où vas-tu ?)",
+          translation: "fítɛ́ = où",
+          options: ["fítɛ́", "nabí", "mɛ̌", "hwetɛ́nu"],
+          answer: "fítɛ́",
+        },
+        {
+          type: "listen",
+          prompt: "Écoute et choisis",
+          audioText: "Un na yì Kutɔnu",
+          question: "Quelle est la traduction ?",
+          options: ["J'irai à Cotonou", "Je viens de Cotonou", "Je suis à la maison", "Je vais au marché"],
+          answer: "J'irai à Cotonou",
+        },
+        {
+          type: "write",
+          prompt: "Écris ta réponse",
+          question: "Écris « aller » en Fon.",
+          answer: "yì",
+          accept: ["yi", "yì"],
+        },
+      ],
+    },
+    {
+      id: "w5l4",
+      title: "Conversations quotidiennes",
+      emoji: "🗣️",
+      exercises: [
+        {
+          type: "listen",
+          prompt: "Écoute et choisis",
+          audioText: "A fɔn ganji à ?",
+          question: "Que te demande-t-on ?",
+          options: ["Comment vas-tu ?", "Où vas-tu ?", "Quel est ton nom ?", "Combien ça coûte ?"],
+          answer: "Comment vas-tu ?",
+        },
+        {
+          type: "fill",
+          prompt: "Complète la phrase",
+          sentence: "Nyikɔ ce nyí ___. (Mon nom est ...)",
+          translation: "Complète avec ton prénom : ici « Kofi ».",
+          options: ["Kofi", "axi", "sìn", "wǒ"],
+          answer: "Kofi",
+        },
+        {
+          type: "order",
+          prompt: "Reconstruis la phrase",
+          french: "Merci beaucoup.",
+          words: ["Awanou", "kaka"],
+          answer: ["Awanou", "kaka"],
+        },
+        {
+          type: "match",
+          prompt: "Associe les mots",
+          pairs: [
+            { fr: "Bonjour", fon: "A fɔn ganji à ?" },
+            { fr: "Merci", fon: "Awanou" },
+            { fr: "Où ?", fon: "Fítɛ́ ?" },
+            { fr: "Combien ?", fon: "Nabí ?" },
+          ],
+        },
+        {
+          type: "write",
+          prompt: "Écris ta réponse",
+          question: "Écris « merci » en Fon.",
+          answer: "awanou",
+          accept: ["Awanou", "awanu"],
+        },
+      ],
+    },
+  ],
+};
+
+worlds.push(world5);
+
+
+
 export const allLessons = worlds.flatMap((w) =>
   w.lessons.map((l) => ({ ...l, worldId: w.id, worldTitle: w.title, color: w.color }))
 );
@@ -1203,11 +1434,23 @@ export function getLesson(id: string) {
 // Les leçons ci-dessous référencent les ids définis dans `worlds`.
 // ---------------------------------------------------------------------------
 
+export type Level = "beginner" | "intermediate" | "advanced";
+
+export const LEVEL_LABEL: Record<Level, string> = {
+  beginner: "Débutant",
+  intermediate: "Intermédiaire",
+  advanced: "Avancé",
+};
+
 export type Unit = {
   id: string;
   title: string;
   titleFon: string;
   emoji: string;
+  /** Objectif pédagogique affiché sur la carte d'unité */
+  objective: string;
+  /** Récompense obtenue à la fin de l'unité */
+  reward: { badge: string; label: string; xp: number };
   lessonIds: string[];
 };
 
@@ -1217,9 +1460,11 @@ export type Section = {
   titleFon: string;
   subtitle: string;
   emoji: string;
+  level: Level;
   color: "primary" | "gold" | "coral";
   units: Unit[];
 };
+
 
 export const sections: Section[] = [
   {
@@ -1228,10 +1473,27 @@ export const sections: Section[] = [
     titleFon: "Afɔ nukɔntɔn lɛ",
     subtitle: "Saluer et engager la conversation",
     emoji: "👋",
+    level: "beginner",
     color: "primary",
     units: [
-      { id: "s1u1", title: "Se saluer", titleFon: "Ðò kúdó nú mɛ", emoji: "☀️", lessonIds: ["w1l1", "w1l2"] },
-      { id: "s1u2", title: "Prendre des nouvelles", titleFon: "Kanbyɔ́ mɛ", emoji: "💬", lessonIds: ["w1l3", "w3l1"] },
+      {
+        id: "s1u1",
+        title: "Salutations",
+        titleFon: "Ðò kúdó nú mɛ",
+        emoji: "☀️",
+        objective: "Saluer, remercier et dire oui/non",
+        reward: { badge: "🌅", label: "Premier bonjour", xp: 30 },
+        lessonIds: ["w1l1", "w1l2"],
+      },
+      {
+        id: "s1u2",
+        title: "Prendre des nouvelles",
+        titleFon: "Kanbyɔ́ mɛ",
+        emoji: "💬",
+        objective: "Demander comment va quelqu'un et répondre",
+        reward: { badge: "🤝", label: "Bon voisin", xp: 30 },
+        lessonIds: ["w1l3", "w3l1"],
+      },
     ],
   },
   {
@@ -1240,42 +1502,181 @@ export const sections: Section[] = [
     titleFon: "Nyɛ kpó hɛnnu ce kpó",
     subtitle: "Famille et pronoms personnels",
     emoji: "👨‍👩‍👧",
+    level: "beginner",
     color: "gold",
     units: [
-      { id: "s2u1", title: "La maison", titleFon: "Xwé", emoji: "🏠", lessonIds: ["w2l1", "w2l2"] },
-      { id: "s2u2", title: "Se désigner", titleFon: "Ðexlɛ́ mɛɖée", emoji: "🙋", lessonIds: ["w3l2", "w3l5"] },
-      { id: "s2u3", title: "Parler au groupe", titleFon: "Ðɔ nú gbɛ̌ta", emoji: "👥", lessonIds: ["w3l3", "w3l6"] },
-      { id: "s2u4", title: "Ce qui est à moi", titleFon: "Nǔ ce lɛ", emoji: "🎁", lessonIds: ["w3l7"] },
+      {
+        id: "s2u1",
+        title: "La famille",
+        titleFon: "Xwé",
+        emoji: "🏠",
+        objective: "Nommer les membres de la famille et la maison",
+        reward: { badge: "🏡", label: "Cœur de famille", xp: 40 },
+        lessonIds: ["w2l1", "w2l2"],
+      },
+      {
+        id: "s2u2",
+        title: "Se présenter",
+        titleFon: "Ðexlɛ́ mɛɖée",
+        emoji: "🙋",
+        objective: "Dire son nom et parler de soi",
+        reward: { badge: "🪪", label: "Enchanté !", xp: 40 },
+        lessonIds: ["w3l2", "w3l5"],
+      },
+      {
+        id: "s2u3",
+        title: "Parler au groupe",
+        titleFon: "Ðɔ nú gbɛ̌ta",
+        emoji: "👥",
+        objective: "Utiliser nous, vous, ils",
+        reward: { badge: "🫂", label: "Voix du groupe", xp: 40 },
+        lessonIds: ["w3l3", "w3l6"],
+      },
+      {
+        id: "s2u4",
+        title: "Ce qui est à moi",
+        titleFon: "Nǔ ce lɛ",
+        emoji: "🎁",
+        objective: "Exprimer la possession",
+        reward: { badge: "🔑", label: "À moi", xp: 30 },
+        lessonIds: ["w3l7"],
+      },
     ],
   },
   {
     id: "s3",
-    title: "Agir et parler",
-    titleFon: "Wà nǔ bo ɖɔ xó",
-    subtitle: "Impératif, négation et nuances",
-    emoji: "⚡",
-    color: "coral",
+    title: "Vie quotidienne",
+    titleFon: "Gbɛ̀ zǎnzǎn",
+    subtitle: "Chiffres, marché, voyages et conversations",
+    emoji: "🛍️",
+    level: "intermediate",
+    color: "gold",
     units: [
-      { id: "s3u1", title: "Donner un ordre", titleFon: "Ná gbè", emoji: "📣", lessonIds: ["w4l1", "w4l2"] },
-      { id: "s3u2", title: "Dire non", titleFon: "Ðɔ eǒ", emoji: "🚫", lessonIds: ["w4l3", "w3l4"] },
-      { id: "s3u3", title: "Nuancer sa phrase", titleFon: "Xógbe sín kpɔ́ndéwú", emoji: "🎚️", lessonIds: ["w4l4"] },
+      {
+        id: "s3u0a",
+        title: "Les chiffres",
+        titleFon: "Sɔgbe lɛ",
+        emoji: "🔢",
+        objective: "Compter de 1 à 10 en Fon",
+        reward: { badge: "🧮", label: "Bon compteur", xp: 30 },
+        lessonIds: ["w5l1"],
+      },
+      {
+        id: "s3u0b",
+        title: "Au marché",
+        titleFon: "Axi mɛ",
+        emoji: "🧺",
+        objective: "Acheter, demander un prix, négocier",
+        reward: { badge: "🪙", label: "Roi du marché", xp: 40 },
+        lessonIds: ["w5l2"],
+      },
+      {
+        id: "s3u0c",
+        title: "Les voyages",
+        titleFon: "Tomɛyiyi",
+        emoji: "🚌",
+        objective: "Se déplacer et demander son chemin",
+        reward: { badge: "🧭", label: "Voyageur", xp: 40 },
+        lessonIds: ["w5l3"],
+      },
+      {
+        id: "s3u0d",
+        title: "Conversations quotidiennes",
+        titleFon: "Xóɖɔ́ zǎnzǎn",
+        emoji: "🗣️",
+        objective: "Tenir une courte conversation naturelle",
+        reward: { badge: "🎙️", label: "Belle langue", xp: 50 },
+        lessonIds: ["w5l4"],
+      },
     ],
   },
   {
     id: "s4",
+    title: "Agir et parler",
+    titleFon: "Wà nǔ bo ɖɔ xó",
+    subtitle: "Impératif, négation et nuances",
+    emoji: "⚡",
+    level: "intermediate",
+    color: "coral",
+    units: [
+      {
+        id: "s4u1",
+        title: "Donner un ordre",
+        titleFon: "Ná gbè",
+        emoji: "📣",
+        objective: "Utiliser l'impératif singulier et pluriel",
+        reward: { badge: "📢", label: "Voix claire", xp: 40 },
+        lessonIds: ["w4l1", "w4l2"],
+      },
+      {
+        id: "s4u2",
+        title: "Dire non",
+        titleFon: "Ðɔ eǒ",
+        emoji: "🚫",
+        objective: "Construire la négation",
+        reward: { badge: "🛑", label: "Ferme et poli", xp: 40 },
+        lessonIds: ["w4l3", "w3l4"],
+      },
+      {
+        id: "s4u3",
+        title: "Nuancer sa phrase",
+        titleFon: "Xógbe sín kpɔ́ndéwú",
+        emoji: "🎚️",
+        objective: "Ajouter les particules bo, ló, ná, ní",
+        reward: { badge: "🎛️", label: "Fin diseur", xp: 30 },
+        lessonIds: ["w4l4"],
+      },
+    ],
+  },
+  {
+    id: "s5",
     title: "Le temps",
     titleFon: "Hwenu",
     subtitle: "Passé, futur, habitudes et progressif",
     emoji: "⏳",
+    level: "advanced",
     color: "primary",
     units: [
-      { id: "s4u1", title: "Le fait simple", titleFon: "Nǔwiwa pléwun", emoji: "✅", lessonIds: ["w4l5"] },
-      { id: "s4u2", title: "Parler du passé", titleFon: "Ðɔ xó dó hwexónu", emoji: "🕰️", lessonIds: ["w4l6"] },
-      { id: "s4u3", title: "Parler du futur", titleFon: "Ðɔ xó dó sɔ́gudo", emoji: "🔮", lessonIds: ["w4l7"] },
-      { id: "s4u4", title: "Habitudes & en cours", titleFon: "Aca kpó nǔwiwa hwenɛnu kpó", emoji: "🔁", lessonIds: ["w4l8", "w4l9"] },
+      {
+        id: "s5u1",
+        title: "Le fait simple",
+        titleFon: "Nǔwiwa pléwun",
+        emoji: "✅",
+        objective: "Employer l'aoriste",
+        reward: { badge: "⏱️", label: "Juste à temps", xp: 30 },
+        lessonIds: ["w4l5"],
+      },
+      {
+        id: "s5u2",
+        title: "Parler du passé",
+        titleFon: "Ðɔ xó dó hwexónu",
+        emoji: "🕰️",
+        objective: "Raconter avec le passé accompli ko",
+        reward: { badge: "📜", label: "Conteur", xp: 40 },
+        lessonIds: ["w4l6"],
+      },
+      {
+        id: "s5u3",
+        title: "Parler du futur",
+        titleFon: "Ðɔ xó dó sɔ́gudo",
+        emoji: "🔮",
+        objective: "Projeter avec na",
+        reward: { badge: "🌠", label: "Visionnaire", xp: 40 },
+        lessonIds: ["w4l7"],
+      },
+      {
+        id: "s5u4",
+        title: "Habitudes & en cours",
+        titleFon: "Aca kpó nǔwiwa hwenɛnu kpó",
+        emoji: "🔁",
+        objective: "Utiliser nɔ et ɖò...wɛ̀",
+        reward: { badge: "🏅", label: "Maître du temps", xp: 60 },
+        lessonIds: ["w4l8", "w4l9"],
+      },
     ],
   },
 ];
+
 
 const lessonById = new Map(allLessons.map((l) => [l.id, l]));
 
@@ -1288,3 +1689,22 @@ export const pathLessons = sections.flatMap((s) =>
       .map((l) => ({ ...l, sectionId: s.id, unitId: u.id, color: s.color }))
   )
 );
+
+/** Leçons d'une unité, dans l'ordre. */
+export function unitLessons(unit: Unit) {
+  return unit.lessonIds
+    .map((id) => lessonById.get(id))
+    .filter((l): l is (typeof allLessons)[number] => !!l);
+}
+
+/** Parcours regroupés par niveau : Débutant, Intermédiaire, Avancé. */
+export const levelTracks: { level: Level; label: string; sections: Section[] }[] = (
+  ["beginner", "intermediate", "advanced"] as Level[]
+).map((level) => ({
+  level,
+  label: LEVEL_LABEL[level],
+  sections: sections.filter((s) => s.level === level),
+}));
+
+/** Toutes les unités à plat, dans l'ordre pédagogique. */
+export const allUnits = sections.flatMap((s) => s.units.map((u) => ({ ...u, section: s })));
