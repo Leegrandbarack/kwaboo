@@ -90,7 +90,7 @@ export function UnitCard({ unit, locked, completed, color, index }: Props) {
               <div className="min-w-0">
                 <div className="font-bold text-sm truncate">{l.title}</div>
                 <div className="text-[11px] font-bold text-muted-foreground truncate">
-                  {l.subtitle ?? `${l.exercises.length} exercices`}
+                  {l.exercises.length} exercices
                 </div>
               </div>
             </div>
