@@ -333,6 +333,20 @@ function isCorrect(ex: Exercise, ans: unknown): boolean {
   }
   return false;
 }
+function questionText(ex: Exercise): string {
+  switch (ex.type) {
+    case "choice":
+      return ex.question;
+    case "translate":
+      return ex.from;
+    case "order":
+      return ex.french;
+    case "match":
+      return ex.pairs.map((p) => p.fr).join(", ");
+    default:
+      return ex.prompt;
+  }
+}
 function correctText(ex: Exercise): string {
   if (ex.type === "choice" || ex.type === "translate") return ex.answer;
   if (ex.type === "order") return ex.answer.join(" ");
