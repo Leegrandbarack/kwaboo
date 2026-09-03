@@ -20,6 +20,7 @@ import { Route as NoHeartsRouteImport } from './routes/no-hearts'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LearnRouteImport } from './routes/learn'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as CoursRouteImport } from './routes/cours'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AchievementsRouteImport } from './routes/achievements'
@@ -81,6 +82,11 @@ const LeaderboardRoute = LeaderboardRouteImport.update({
   path: '/leaderboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CoursRoute = CoursRouteImport.update({
+  id: '/cours',
+  path: '/cours',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CommunityRoute = CommunityRouteImport.update({
   id: '/community',
   path: '/community',
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/achievements': typeof AchievementsRoute
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRoute
+  '/cours': typeof CoursRoute
   '/leaderboard': typeof LeaderboardRoute
   '/learn': typeof LearnRoute
   '/login': typeof LoginRoute
@@ -130,6 +137,7 @@ export interface FileRoutesByTo {
   '/achievements': typeof AchievementsRoute
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRoute
+  '/cours': typeof CoursRoute
   '/leaderboard': typeof LeaderboardRoute
   '/learn': typeof LearnRoute
   '/login': typeof LoginRoute
@@ -149,6 +157,7 @@ export interface FileRoutesById {
   '/achievements': typeof AchievementsRoute
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRoute
+  '/cours': typeof CoursRoute
   '/leaderboard': typeof LeaderboardRoute
   '/learn': typeof LearnRoute
   '/login': typeof LoginRoute
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/chat'
     | '/community'
+    | '/cours'
     | '/leaderboard'
     | '/learn'
     | '/login'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/chat'
     | '/community'
+    | '/cours'
     | '/leaderboard'
     | '/learn'
     | '/login'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/chat'
     | '/community'
+    | '/cours'
     | '/leaderboard'
     | '/learn'
     | '/login'
@@ -224,6 +236,7 @@ export interface RootRouteChildren {
   AchievementsRoute: typeof AchievementsRoute
   ChatRoute: typeof ChatRoute
   CommunityRoute: typeof CommunityRoute
+  CoursRoute: typeof CoursRoute
   LeaderboardRoute: typeof LeaderboardRoute
   LearnRoute: typeof LearnRoute
   LoginRoute: typeof LoginRoute
@@ -317,6 +330,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeaderboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cours': {
+      id: '/cours'
+      path: '/cours'
+      fullPath: '/cours'
+      preLoaderRoute: typeof CoursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/community': {
       id: '/community'
       path: '/community'
@@ -360,6 +380,7 @@ const rootRouteChildren: RootRouteChildren = {
   AchievementsRoute: AchievementsRoute,
   ChatRoute: ChatRoute,
   CommunityRoute: CommunityRoute,
+  CoursRoute: CoursRoute,
   LeaderboardRoute: LeaderboardRoute,
   LearnRoute: LearnRoute,
   LoginRoute: LoginRoute,
