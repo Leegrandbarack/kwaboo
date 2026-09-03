@@ -1,6 +1,6 @@
 # Page « Cours » (style Duolingo / Babbel)
 
-Nouvelle page dédiée à l'apprentissage structuré, séparée de la page « Apprendre » actuelle qui n'affiche que l'arbre de parcours.
+Nouvelle page dédiée à l'apprentissage structuré, séparée de la page « Apprendre » actuelle qui n'affiche que l'arbre de parcours.comme dns duolingo et baddel
 
 ## Ce que la page contiendra
 

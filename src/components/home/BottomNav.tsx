@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { Home, BookOpen, Trophy, MessageCircle, User } from "lucide-react";
+import { Home, BookOpen, RotateCcw, MessageCircle, User } from "lucide-react";
 
 const tabs = [
   { id: "home", label: "Accueil", icon: Home, to: "/" as const },
-  { id: "learn", label: "Apprendre", icon: BookOpen, to: "/learn" as const },
+  { id: "cours", label: "Cours", icon: BookOpen, to: "/cours" as const },
+  { id: "revision", label: "Révision", icon: RotateCcw, to: "/revision" as const },
   { id: "chat", label: "Parler", icon: MessageCircle, to: "/chat" as const },
-  { id: "rank", label: "Classement", icon: Trophy, to: "/leaderboard" as const },
   { id: "profile", label: "Profil", icon: User, to: "/profile" as const },
 ];
 
