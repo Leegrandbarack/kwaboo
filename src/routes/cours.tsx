@@ -3,10 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { BottomNav } from "@/components/home/BottomNav";
 import { CourseHeader } from "@/components/cours/CourseHeader";
 import { LevelTrack } from "@/components/cours/LevelTrack";
-import { ReviewCard } from "@/components/cours/ReviewCard";
 import { allUnits, levelTracks, pathLessons, type Level } from "@/lib/curriculum";
 import { useProgress } from "@/lib/progress";
-import { useReview } from "@/lib/review";
 
 export const Route = createFileRoute("/cours")({
   head: () => ({
@@ -32,7 +30,6 @@ export const Route = createFileRoute("/cours")({
 
 function CoursPage() {
   const { progress } = useProgress();
-  const { items } = useReview();
   const completed = progress.completed;
 
   const { lockedUnitIds, nextLesson, doneCount, currentLevel } = useMemo(() => {
@@ -54,7 +51,6 @@ function CoursPage() {
 
   const total = pathLessons.length;
   const donePct = total ? Math.round((doneCount / total) * 100) : 0;
-  const dueCount = items.filter((i) => i.dueAt <= Date.now()).length;
 
   return (
     <div className="min-h-dvh bg-background">
@@ -85,8 +81,6 @@ function CoursPage() {
               />
             ))}
         </div>
-
-        <ReviewCard dueCount={dueCount} totalCount={items.length} />
       </main>
       <BottomNav active="cours" />
     </div>

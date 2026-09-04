@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Home, BookOpen, RotateCcw, MessageCircle, User } from "lucide-react";
+import { Home, BookOpen, Map, RotateCcw, MessageCircle, User } from "lucide-react";
 
 const tabs = [
   { id: "home", label: "Accueil", icon: Home, to: "/" as const },
+  { id: "learn", label: "Apprendre", icon: Map, to: "/learn" as const },
   { id: "cours", label: "Cours", icon: BookOpen, to: "/cours" as const },
   { id: "revision", label: "Révision", icon: RotateCcw, to: "/revision" as const },
   { id: "chat", label: "Parler", icon: MessageCircle, to: "/chat" as const },
@@ -19,12 +20,12 @@ export function BottomNav({ active = "home" }: { active?: string }) {
           aria-hidden
           className="absolute top-1.5 bottom-1.5 rounded-2xl bg-primary/12 pointer-events-none"
           style={{
-            width: `calc(20% - 8px)`,
-            left: `calc(${activeIdx * 20}% + 4px)`,
+            width: `calc(16.6667% - 8px)`,
+            left: `calc(${activeIdx * 16.6667}% + 4px)`,
             transition: "left 360ms var(--ease-spring)",
           }}
         />
-        <div className="grid grid-cols-5 relative">
+        <div className="grid grid-cols-6 relative">
           {tabs.map((t) => {
             const Icon = t.icon;
             const isActive = t.id === active;

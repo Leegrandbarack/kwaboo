@@ -1,6 +1,8 @@
+import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Check, Lock, Play } from "lucide-react";
-import { unitLessons, type Unit } from "@/lib/curriculum";
+import { Check, ChevronDown, Lock, Play } from "lucide-react";
+import { unitLessons, unitVocab, type Unit } from "@/lib/curriculum";
+import { SpeakButton } from "@/components/SpeakButton";
 
 type Props = {
   unit: Unit;
@@ -21,6 +23,8 @@ export function UnitCard({ unit, locked, completed, color, index }: Props) {
   const doneIds = lessons.filter((l) => completed.includes(l.id));
   const pct = lessons.length ? Math.round((doneIds.length / lessons.length) * 100) : 0;
   const unitDone = pct === 100;
+  const vocab = useMemo(() => unitVocab(unit), [unit]);
+  const [showVocab, setShowVocab] = useState(false);
 
   return (
     <div
@@ -54,6 +58,41 @@ export function UnitCard({ unit, locked, completed, color, index }: Props) {
           {doneIds.length}/{lessons.length}
         </span>
       </div>
+
+      {vocab.length > 0 && (
+        <div className="mt-3">
+          <button
+            onClick={() => setShowVocab((v) => !v)}
+            aria-expanded={showVocab}
+            className="press w-full flex items-center gap-2 rounded-2xl border-2 border-border bg-muted/40 px-3 py-2 text-left"
+          >
+            <span className="text-base">📖</span>
+            <span className="flex-1 text-[11px] font-black uppercase tracking-wider text-muted-foreground">
+              Mots-clés · {vocab.length}
+            </span>
+            <ChevronDown
+              className={`w-4 h-4 text-muted-foreground shrink-0 ${showVocab ? "rotate-180" : ""}`}
+              style={{ transition: "transform 260ms var(--ease-out-soft)" }}
+            />
+          </button>
+          {showVocab && (
+            <ul className="mt-2 space-y-1.5">
+              {vocab.map((w) => (
+                <li
+                  key={w.fon}
+                  className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="font-black text-sm truncate">{w.fon}</div>
+                    <div className="text-[11px] font-bold text-muted-foreground truncate">{w.fr}</div>
+                  </div>
+                  <SpeakButton text={w.fon} size="sm" />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       <ul className="mt-3 space-y-2">
         {lessons.map((l, i) => {
