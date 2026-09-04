@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as TraductionRouteImport } from './routes/traduction'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as RevisionRouteImport } from './routes/revision'
@@ -30,6 +31,11 @@ import { Route as LessonIdRouteImport } from './routes/lesson.$id'
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TraductionRoute = TraductionRouteImport.update({
+  id: '/traduction',
+  path: '/traduction',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -129,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/revision': typeof RevisionRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
+  '/traduction': typeof TraductionRoute
   '/welcome': typeof WelcomeRoute
   '/lesson/$id': typeof LessonIdRoute
 }
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   '/revision': typeof RevisionRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
+  '/traduction': typeof TraductionRoute
   '/welcome': typeof WelcomeRoute
   '/lesson/$id': typeof LessonIdRoute
 }
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/revision': typeof RevisionRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
+  '/traduction': typeof TraductionRoute
   '/welcome': typeof WelcomeRoute
   '/lesson/$id': typeof LessonIdRoute
 }
@@ -189,6 +198,7 @@ export interface FileRouteTypes {
     | '/revision'
     | '/shop'
     | '/signup'
+    | '/traduction'
     | '/welcome'
     | '/lesson/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/revision'
     | '/shop'
     | '/signup'
+    | '/traduction'
     | '/welcome'
     | '/lesson/$id'
   id:
@@ -227,6 +238,7 @@ export interface FileRouteTypes {
     | '/revision'
     | '/shop'
     | '/signup'
+    | '/traduction'
     | '/welcome'
     | '/lesson/$id'
   fileRoutesById: FileRoutesById
@@ -247,6 +259,7 @@ export interface RootRouteChildren {
   RevisionRoute: typeof RevisionRoute
   ShopRoute: typeof ShopRoute
   SignupRoute: typeof SignupRoute
+  TraductionRoute: typeof TraductionRoute
   WelcomeRoute: typeof WelcomeRoute
   LessonIdRoute: typeof LessonIdRoute
 }
@@ -258,6 +271,13 @@ declare module '@tanstack/react-router' {
       path: '/welcome'
       fullPath: '/welcome'
       preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/traduction': {
+      id: '/traduction'
+      path: '/traduction'
+      fullPath: '/traduction'
+      preLoaderRoute: typeof TraductionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -391,6 +411,7 @@ const rootRouteChildren: RootRouteChildren = {
   RevisionRoute: RevisionRoute,
   ShopRoute: ShopRoute,
   SignupRoute: SignupRoute,
+  TraductionRoute: TraductionRoute,
   WelcomeRoute: WelcomeRoute,
   LessonIdRoute: LessonIdRoute,
 }

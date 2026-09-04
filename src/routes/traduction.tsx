@@ -37,7 +37,7 @@ function TraductionPage() {
     <div className="min-h-dvh bg-background">
       <main className="max-w-2xl mx-auto px-4 pt-6 pb-32">
         <header className="flex items-center gap-3">
-          <Ayi size={56} mood="idle" />
+          <Ayi size={56} mood="happy" />
           <div>
             <h1 className="font-display font-black text-2xl leading-tight">Traduction</h1>
             <p className="text-sm font-bold text-muted-foreground">
@@ -67,7 +67,7 @@ function TraductionPage() {
 
         {results.length === 0 ? (
           <div className="mt-10 flex flex-col items-center text-center gap-3">
-            <Ayi size={130} mood="think" />
+            <Ayi size={130} mood="thinking" />
             <h2 className="font-display font-black text-xl">Aucun résultat</h2>
             <p className="text-muted-foreground font-bold max-w-sm">
               Essaie un autre mot, ou vérifie l'orthographe. Le dictionnaire grandit avec les
