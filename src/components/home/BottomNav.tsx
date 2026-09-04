@@ -20,12 +20,12 @@ export function BottomNav({ active = "home" }: { active?: string }) {
           aria-hidden
           className="absolute top-1.5 bottom-1.5 rounded-2xl bg-primary/12 pointer-events-none"
           style={{
-            width: `calc(16.6667% - 8px)`,
-            left: `calc(${activeIdx * 16.6667}% + 4px)`,
+            width: `calc(20% - 8px)`,
+            left: `calc(${activeIdx * 20}% + 4px)`,
             transition: "left 360ms var(--ease-spring)",
           }}
         />
-        <div className="grid grid-cols-6 relative">
+        <div className="grid grid-cols-5 relative">
           {tabs.map((t) => {
             const Icon = t.icon;
             const isActive = t.id === active;
