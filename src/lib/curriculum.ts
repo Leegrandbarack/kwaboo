@@ -1697,6 +1697,30 @@ export function unitLessons(unit: Unit) {
     .filter((l): l is (typeof allLessons)[number] => !!l);
 }
 
+/** Mots-clés (fon → français) extraits des exercices d'une unité. */
+export function unitVocab(unit: Unit, max = 6): { fon: string; fr: string }[] {
+  const out: { fon: string; fr: string }[] = [];
+  const seen = new Set<string>();
+  const push = (fon: string, fr: string) => {
+    const key = fon.toLowerCase();
+    if (!fon || !fr || seen.has(key)) return;
+    seen.add(key);
+    out.push({ fon, fr });
+  };
+  for (const lesson of unitLessons(unit)) {
+    for (const ex of lesson.exercises) {
+      if (ex.type === "match") {
+        for (const p of ex.pairs) push(p.fon, p.fr);
+      } else if (ex.type === "translate") {
+        if (ex.to === "fon") push(ex.answer, ex.from);
+        else push(ex.from, ex.answer);
+      }
+      if (out.length >= max) return out.slice(0, max);
+    }
+  }
+  return out.slice(0, max);
+}
+
 /** Parcours regroupés par niveau : Débutant, Intermédiaire, Avancé. */
 export const levelTracks: { level: Level; label: string; sections: Section[] }[] = (
   ["beginner", "intermediate", "advanced"] as Level[]
