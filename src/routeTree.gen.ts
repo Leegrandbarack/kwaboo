@@ -10,9 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as TraductionRouteImport } from './routes/traduction'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ShopRouteImport } from './routes/shop'
-import { Route as RevisionRouteImport } from './routes/revision'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ParametresRouteImport } from './routes/parametres'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -20,7 +20,6 @@ import { Route as NoHeartsRouteImport } from './routes/no-hearts'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LearnRouteImport } from './routes/learn'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
-import { Route as CoursRouteImport } from './routes/cours'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AchievementsRouteImport } from './routes/achievements'
@@ -32,6 +31,11 @@ const WelcomeRoute = WelcomeRouteImport.update({
   path: '/welcome',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TraductionRoute = TraductionRouteImport.update({
+  id: '/traduction',
+  path: '/traduction',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -40,11 +44,6 @@ const SignupRoute = SignupRouteImport.update({
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RevisionRoute = RevisionRouteImport.update({
-  id: '/revision',
-  path: '/revision',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -82,11 +81,6 @@ const LeaderboardRoute = LeaderboardRouteImport.update({
   path: '/leaderboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CoursRoute = CoursRouteImport.update({
-  id: '/cours',
-  path: '/cours',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CommunityRoute = CommunityRouteImport.update({
   id: '/community',
   path: '/community',
@@ -118,7 +112,6 @@ export interface FileRoutesByFullPath {
   '/achievements': typeof AchievementsRoute
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRoute
-  '/cours': typeof CoursRoute
   '/leaderboard': typeof LeaderboardRoute
   '/learn': typeof LearnRoute
   '/login': typeof LoginRoute
@@ -126,9 +119,9 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/parametres': typeof ParametresRoute
   '/profile': typeof ProfileRoute
-  '/revision': typeof RevisionRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
+  '/traduction': typeof TraductionRoute
   '/welcome': typeof WelcomeRoute
   '/lesson/$id': typeof LessonIdRoute
 }
@@ -137,7 +130,6 @@ export interface FileRoutesByTo {
   '/achievements': typeof AchievementsRoute
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRoute
-  '/cours': typeof CoursRoute
   '/leaderboard': typeof LeaderboardRoute
   '/learn': typeof LearnRoute
   '/login': typeof LoginRoute
@@ -145,9 +137,9 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/parametres': typeof ParametresRoute
   '/profile': typeof ProfileRoute
-  '/revision': typeof RevisionRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
+  '/traduction': typeof TraductionRoute
   '/welcome': typeof WelcomeRoute
   '/lesson/$id': typeof LessonIdRoute
 }
@@ -157,7 +149,6 @@ export interface FileRoutesById {
   '/achievements': typeof AchievementsRoute
   '/chat': typeof ChatRoute
   '/community': typeof CommunityRoute
-  '/cours': typeof CoursRoute
   '/leaderboard': typeof LeaderboardRoute
   '/learn': typeof LearnRoute
   '/login': typeof LoginRoute
@@ -165,9 +156,9 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/parametres': typeof ParametresRoute
   '/profile': typeof ProfileRoute
-  '/revision': typeof RevisionRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
+  '/traduction': typeof TraductionRoute
   '/welcome': typeof WelcomeRoute
   '/lesson/$id': typeof LessonIdRoute
 }
@@ -178,7 +169,6 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/chat'
     | '/community'
-    | '/cours'
     | '/leaderboard'
     | '/learn'
     | '/login'
@@ -186,9 +176,9 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/parametres'
     | '/profile'
-    | '/revision'
     | '/shop'
     | '/signup'
+    | '/traduction'
     | '/welcome'
     | '/lesson/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -197,7 +187,6 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/chat'
     | '/community'
-    | '/cours'
     | '/leaderboard'
     | '/learn'
     | '/login'
@@ -205,9 +194,9 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/parametres'
     | '/profile'
-    | '/revision'
     | '/shop'
     | '/signup'
+    | '/traduction'
     | '/welcome'
     | '/lesson/$id'
   id:
@@ -216,7 +205,6 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/chat'
     | '/community'
-    | '/cours'
     | '/leaderboard'
     | '/learn'
     | '/login'
@@ -224,9 +212,9 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/parametres'
     | '/profile'
-    | '/revision'
     | '/shop'
     | '/signup'
+    | '/traduction'
     | '/welcome'
     | '/lesson/$id'
   fileRoutesById: FileRoutesById
@@ -236,7 +224,6 @@ export interface RootRouteChildren {
   AchievementsRoute: typeof AchievementsRoute
   ChatRoute: typeof ChatRoute
   CommunityRoute: typeof CommunityRoute
-  CoursRoute: typeof CoursRoute
   LeaderboardRoute: typeof LeaderboardRoute
   LearnRoute: typeof LearnRoute
   LoginRoute: typeof LoginRoute
@@ -244,9 +231,9 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   ParametresRoute: typeof ParametresRoute
   ProfileRoute: typeof ProfileRoute
-  RevisionRoute: typeof RevisionRoute
   ShopRoute: typeof ShopRoute
   SignupRoute: typeof SignupRoute
+  TraductionRoute: typeof TraductionRoute
   WelcomeRoute: typeof WelcomeRoute
   LessonIdRoute: typeof LessonIdRoute
 }
@@ -258,6 +245,13 @@ declare module '@tanstack/react-router' {
       path: '/welcome'
       fullPath: '/welcome'
       preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/traduction': {
+      id: '/traduction'
+      path: '/traduction'
+      fullPath: '/traduction'
+      preLoaderRoute: typeof TraductionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -272,13 +266,6 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/revision': {
-      id: '/revision'
-      path: '/revision'
-      fullPath: '/revision'
-      preLoaderRoute: typeof RevisionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -330,13 +317,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeaderboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/cours': {
-      id: '/cours'
-      path: '/cours'
-      fullPath: '/cours'
-      preLoaderRoute: typeof CoursRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/community': {
       id: '/community'
       path: '/community'
@@ -380,7 +360,6 @@ const rootRouteChildren: RootRouteChildren = {
   AchievementsRoute: AchievementsRoute,
   ChatRoute: ChatRoute,
   CommunityRoute: CommunityRoute,
-  CoursRoute: CoursRoute,
   LeaderboardRoute: LeaderboardRoute,
   LearnRoute: LearnRoute,
   LoginRoute: LoginRoute,
@@ -388,9 +367,9 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   ParametresRoute: ParametresRoute,
   ProfileRoute: ProfileRoute,
-  RevisionRoute: RevisionRoute,
   ShopRoute: ShopRoute,
   SignupRoute: SignupRoute,
+  TraductionRoute: TraductionRoute,
   WelcomeRoute: WelcomeRoute,
   LessonIdRoute: LessonIdRoute,
 }
