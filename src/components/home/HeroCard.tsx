@@ -7,7 +7,7 @@ export function HeroCard() {
   const { progress } = useProgress();
   const level = Math.floor(progress.xp / 100) + 1;
   const levelProgress = progress.xp % 100;
-  const next = allLessons.find((l) => !progress.completed.includes(l.id)) ?? allLessons[0];
+  const next = allLessons.find((l) => !progress.completed.includes(l.id)) ?? allLessons[0] ?? null;
   const today = new Date().toISOString().slice(0, 10);
   const todayXp = progress.lastDay === today ? Math.min(progress.dailyGoal, progress.xp) : 0;
   const dailyPct = Math.min(100, Math.round((todayXp / progress.dailyGoal) * 100));
@@ -68,14 +68,20 @@ export function HeroCard() {
             />
           </div>
 
-          <Link
-            to="/lesson/$id"
-            params={{ id: next.id }}
-            className="btn-3d mt-7 w-full sm:w-auto sm:min-w-[268px] bg-gold text-gold-foreground font-display font-black px-7 py-4 rounded-2xl uppercase tracking-[0.08em] inline-flex items-center justify-center gap-2 text-[15px]"
-          >
-            Continuer la leçon
-            <ArrowRight className="w-5 h-5" strokeWidth={3} />
-          </Link>
+          {next ? (
+            <Link
+              to="/lesson/$id"
+              params={{ id: next.id }}
+              className="btn-3d mt-7 w-full sm:w-auto sm:min-w-[268px] bg-gold text-gold-foreground font-display font-black px-7 py-4 rounded-2xl uppercase tracking-[0.08em] inline-flex items-center justify-center gap-2 text-[15px]"
+            >
+              Continuer la leçon
+              <ArrowRight className="w-5 h-5" strokeWidth={3} />
+            </Link>
+          ) : (
+            <div className="mt-7 rounded-2xl bg-white/15 border border-white/25 px-5 py-4 text-sm font-bold">
+              Les leçons arrivent très bientôt.
+            </div>
+          )}
         </div>
       </div>
     </section>
