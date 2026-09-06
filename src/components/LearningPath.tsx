@@ -12,6 +12,18 @@ export function LearningPath() {
 
   let cursor = 0;
 
+  if (sections.length === 0) {
+    return (
+      <div className="mx-4 rounded-[28px] border-2 border-dashed border-border bg-card p-8 text-center">
+        <div className="text-4xl">🌱</div>
+        <h2 className="font-display font-black text-xl mt-3">Parcours en préparation</h2>
+        <p className="text-sm font-bold text-muted-foreground mt-2">
+          Le nouveau programme Fɔngbè arrive bientôt, unité par unité.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-14 pb-32">
       {sections.map((section, si) => {
