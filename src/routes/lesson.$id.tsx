@@ -25,6 +25,8 @@ export const Route = createFileRoute("/lesson/$id")({
 function LessonPage() {
   const { id } = Route.useParams();
   const data = getLesson(id);
+  const [started, setStarted] = useState(false);
+  if (id === "l1" && !started) return <AlphabetIntro onStart={() => setStarted(true)} />;
   if (!data) {
     return (
       <div className="min-h-dvh grid place-items-center p-6 text-center">
