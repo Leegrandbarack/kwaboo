@@ -251,6 +251,11 @@ const plan: LevelPlan[] = [
   },
 ];
 
+/** Contenu des exercices par leçon (les leçons non listées sont encore vides). */
+const lessonExercises: Record<string, Exercise[]> = {
+  l1: buildAlphabetExercises(),
+};
+
 export const worlds: World[] = plan.map((lvl) => ({
   id: lvl.id,
   title: lvl.title,
@@ -264,7 +269,7 @@ export const worlds: World[] = plan.map((lvl) => ({
       emoji: l.emoji,
       objective: l.objective,
       difficulty: l.difficulty,
-      exercises: [] as Exercise[],
+      exercises: lessonExercises[l.id] ?? [],
     }))
   ),
 }));
