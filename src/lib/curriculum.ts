@@ -1,3 +1,5 @@
+import { buildAlphabetExercises } from "@/lib/alphabet";
+
 export type Exercise =
   | { type: "choice"; prompt: string; question: string; options: string[]; answer: string; hint?: string }
   | { type: "translate"; prompt: string; from: string; to: string; answer: string; choices: string[] }

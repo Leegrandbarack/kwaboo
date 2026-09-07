@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getLesson } from "@/lib/curriculum";
 import { ExercisePlayer } from "@/components/exercises/ExercisePlayer";
+import { AlphabetIntro } from "@/components/lesson/AlphabetIntro";
 
 export const Route = createFileRoute("/lesson/$id")({
   head: () => ({
