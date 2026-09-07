@@ -317,8 +317,25 @@ export type Section = {
   units: Unit[];
 };
 
-/** Parcours — vide en attendant le nouveau programme. */
-export const sections: Section[] = [];
+/** Parcours dérivé du programme : 3 niveaux · 12 unités · 36 leçons. */
+export const sections: Section[] = plan.map((lvl) => ({
+  id: lvl.id,
+  title: lvl.title,
+  titleFon: lvl.titleFon,
+  subtitle: lvl.subtitle,
+  emoji: lvl.emoji,
+  level: lvl.level,
+  color: lvl.color,
+  units: lvl.units.map((u) => ({
+    id: u.id,
+    title: u.title,
+    titleFon: u.titleFon,
+    emoji: u.emoji,
+    objective: u.objective,
+    reward: u.reward,
+    lessonIds: u.lessons.map((l) => l.id),
+  })),
+}));
 
 const lessonById = new Map(allLessons.map((l) => [l.id, l]));
 
