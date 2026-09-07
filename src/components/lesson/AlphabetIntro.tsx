@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { fonAlphabet } from "@/lib/alphabet";
 import { SpeakButton } from "@/components/SpeakButton";
-import { Ayi, AyiBubble } from "@/components/Ayi";
+import { AyiBubble } from "@/components/Ayi";
 
 export function AlphabetIntro({ onStart }: { onStart: () => void }) {
   return (
@@ -17,12 +17,9 @@ export function AlphabetIntro({ onStart }: { onStart: () => void }) {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 pb-40 pt-5">
-        <div className="flex items-start gap-3">
-          <Ayi size={72} mood="happy" />
-          <AyiBubble>
-            Écoute chaque lettre, puis on s&apos;entraîne ! Les lettres en couleur n&apos;existent pas en français.
-          </AyiBubble>
-        </div>
+        <AyiBubble>
+          Écoute chaque lettre, puis on s&apos;entraîne ! Les lettres en couleur n&apos;existent pas en français.
+        </AyiBubble>
 
         <div className="mt-5 rounded-[24px] border-2 border-border bg-card overflow-hidden">
           <div className="grid grid-cols-[1fr_1fr_auto] gap-2 px-4 py-3 bg-muted/60 text-xs font-black uppercase tracking-wide text-muted-foreground">
