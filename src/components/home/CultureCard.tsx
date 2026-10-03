@@ -1,15 +1,24 @@
 import { Sparkles, ArrowRight } from "lucide-react";
-import cultureImage from "@/assets/danxome-culture.jpg";
-import { Button } from "@/components/ui/button";
 
 export function CultureCard() {
   return (
-    <section>
-      <article className="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-card">
-        <div className="aspect-[2/1] overflow-hidden bg-muted">
-          <img src={cultureImage} alt="Illustration des palais royaux du Danxomè" width={1536} height={768} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.03]" />
-        </div>
-        <div className="p-5">
+    <section className="mx-4">
+      <article className="relative overflow-hidden rounded-3xl border border-border/60 p-5 shadow-card bg-card">
+        {/* Culture pattern background */}
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-70 bg-african-pattern"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(135deg, color-mix(in oklab, var(--coral) 8%, transparent) 0%, transparent 60%)",
+          }}
+        />
+
+        <div className="relative">
           <div className="flex items-center justify-between">
             <div className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest bg-gold text-gold-foreground px-2.5 py-1 rounded-full shadow-sm">
               <Sparkles className="w-3 h-3" /> Culture Fon
@@ -19,9 +28,14 @@ export function CultureCard() {
             </span>
           </div>
 
-          <div className="mt-4 flex items-center gap-4">
-            <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-coral text-2xl text-coral-foreground shadow-sm" aria-hidden>👑</div>
-            <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-4 mt-4">
+            <div
+              className="w-20 h-20 shrink-0 rounded-2xl bg-gradient-to-br from-coral via-gold to-primary grid place-items-center text-4xl shadow-card ring-2 ring-white/40"
+              aria-hidden
+            >
+              👑
+            </div>
+            <div className="flex-1 min-w-0">
               <h3 className="font-display font-black text-lg leading-tight">
                 Le Royaume du Danxomè
               </h3>
@@ -31,9 +45,9 @@ export function CultureCard() {
             </div>
           </div>
 
-          <Button className="btn-3d mt-4 h-12 w-full rounded-2xl bg-coral px-5 font-display text-sm font-black uppercase tracking-wider text-coral-foreground hover:bg-coral/90">
+          <button className="btn-3d mt-4 w-full bg-coral text-coral-foreground font-display font-black px-5 py-3 rounded-2xl uppercase tracking-wider text-sm flex items-center justify-center gap-2">
             Explorer <ArrowRight className="w-4 h-4" strokeWidth={3} />
-          </Button>
+          </button>
         </div>
       </article>
     </section>

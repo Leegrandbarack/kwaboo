@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, Target, Sparkles } from "lucide-react";
 import { useProgress } from "@/lib/progress";
 import { allLessons } from "@/lib/curriculum";
-import { Button } from "@/components/ui/button";
 
 export function HeroCard() {
   const { progress } = useProgress();
@@ -14,11 +13,23 @@ export function HeroCard() {
   const dailyPct = Math.min(100, Math.round((todayXp / progress.dailyGoal) * 100));
 
   return (
-    <section className="rise-in">
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-hero p-5 text-primary-foreground shadow-card sm:p-7">
-        <div aria-hidden className="absolute inset-y-0 right-0 w-1/3 bg-gold/15" />
-        <div className="relative max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-primary-foreground/25 bg-primary-foreground/15 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest backdrop-blur-md">
+    <section className="rise-in mx-4">
+      <div className="relative overflow-hidden rounded-[28px] bg-gradient-hero text-white p-6 shadow-card">
+        {/* Decorative layers */}
+        <div
+          className="absolute inset-0 opacity-[0.12] pointer-events-none mix-blend-overlay"
+          aria-hidden
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 20% 15%, rgba(255,255,255,0.6) 0 1.5px, transparent 2px), radial-gradient(circle at 70% 60%, rgba(255,255,255,0.4) 0 1.5px, transparent 2px)",
+            backgroundSize: "26px 26px, 40px 40px",
+          }}
+        />
+        <div className="absolute -right-12 -top-14 w-56 h-56 rounded-full bg-gold/40 blur-3xl" aria-hidden />
+        <div className="absolute -left-10 -bottom-10 w-40 h-40 rounded-full bg-coral/30 blur-3xl" aria-hidden />
+
+        <div className="relative">
+          <div className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-md border border-white/25 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest">
             <Sparkles className="w-3 h-3" /> Niveau {level}
           </div>
 
@@ -26,28 +37,18 @@ export function HeroCard() {
             Bonjour {progress.username}
             <span className="inline-block ayi-float ml-1">👋</span>
           </h1>
-          <p className="mt-2 max-w-[46ch] text-sm font-semibold text-primary-foreground/80 sm:text-base">
+          <p className="font-semibold text-white/80 mt-2 text-sm sm:text-base max-w-[46ch]">
             Prêt à apprendre le Fɔngbè aujourd&apos;hui&nbsp;?
           </p>
-
-          {next && (
-            <div className="mt-5 rounded-2xl border border-primary-foreground/20 bg-primary-foreground/10 p-4 backdrop-blur-sm">
-              <div className="text-[10px] font-black uppercase tracking-widest text-primary-foreground/70">Prochaine leçon</div>
-              <div className="mt-1 flex items-center gap-2 font-display text-lg font-black">
-                <span aria-hidden>{next.emoji}</span>
-                <span className="min-w-0 truncate">{next.title}</span>
-              </div>
-            </div>
-          )}
 
           <div className="mt-6">
             <div className="flex items-center justify-between text-[11px] font-black mb-1.5 uppercase tracking-wider">
               <span className="opacity-90">Progression</span>
               <span className="opacity-90 tabular-nums">{levelProgress}/100 XP</span>
             </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-foreground/20 ring-1 ring-primary-foreground/10">
+            <div className="h-2.5 bg-black/20 rounded-full overflow-hidden ring-1 ring-white/10">
               <div
-                className="shimmer-overlay relative h-full rounded-full bg-gold transition-all duration-700"
+                className="h-full bg-gradient-to-r from-gold to-white rounded-full transition-all duration-700 shimmer-overlay relative"
                 style={{ width: `${levelProgress}%` }}
               />
             </div>
@@ -60,22 +61,24 @@ export function HeroCard() {
               {todayXp}/{progress.dailyGoal} XP
             </span>
           </div>
-          <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-foreground/20 ring-1 ring-primary-foreground/10">
+          <div className="h-2 mt-1.5 bg-black/20 rounded-full overflow-hidden ring-1 ring-white/10">
             <div
-              className="h-full rounded-full bg-primary-foreground transition-all duration-700"
+              className="h-full bg-white rounded-full transition-all duration-700"
               style={{ width: `${dailyPct}%` }}
             />
           </div>
 
           {next ? (
-            <Button asChild className="btn-3d mt-6 h-14 w-full rounded-2xl bg-gold px-7 font-display text-sm font-black uppercase tracking-wider text-gold-foreground hover:bg-gold/90 sm:w-auto sm:min-w-64">
-              <Link to="/lesson/$id" params={{ id: next.id }}>
-                Continuer la leçon
-                <ArrowRight className="size-5" strokeWidth={3} />
-              </Link>
-            </Button>
+            <Link
+              to="/lesson/$id"
+              params={{ id: next.id }}
+              className="btn-3d mt-7 w-full sm:w-auto sm:min-w-[268px] bg-gold text-gold-foreground font-display font-black px-7 py-4 rounded-2xl uppercase tracking-[0.08em] inline-flex items-center justify-center gap-2 text-[15px]"
+            >
+              Continuer la leçon
+              <ArrowRight className="w-5 h-5" strokeWidth={3} />
+            </Link>
           ) : (
-            <div className="mt-6 rounded-2xl border border-primary-foreground/25 bg-primary-foreground/15 px-5 py-4 text-sm font-bold">
+            <div className="mt-7 rounded-2xl bg-white/15 border border-white/25 px-5 py-4 text-sm font-bold">
               Les leçons arrivent très bientôt.
             </div>
           )}

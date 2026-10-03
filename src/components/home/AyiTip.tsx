@@ -18,10 +18,10 @@ export function AyiTip() {
   }, []);
 
   return (
-    <section>
+    <section className="mx-4">
       <div className="flex items-end gap-3">
         <div className="shrink-0">
-          <Ayi size={76} mood="thinking" />
+          <Ayi size={68} mood="thinking" />
         </div>
         <div className="relative flex-1 min-w-0 bg-card border border-border/70 rounded-2xl rounded-bl-md px-4 py-3 shadow-card">
           <div
