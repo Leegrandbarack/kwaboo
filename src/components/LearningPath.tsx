@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Lock, Star } from "lucide-react";
+import { Check, Lock, Play, Star, Trophy } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { sections, pathLessons } from "@/lib/curriculum";
 import { useProgress } from "@/lib/progress";
 
@@ -25,12 +26,12 @@ export function LearningPath() {
   }
 
   return (
-    <div className="space-y-14 pb-32">
+    <div className="space-y-10 px-4 pb-32 sm:px-6">
       {sections.map((section, si) => {
         const sectionLessons = pathLessons.filter((l) => l.sectionId === section.id);
         const sectionDone = sectionLessons.filter((l) => progress.completed.includes(l.id)).length;
         return (
-          <section key={section.id}>
+          <section key={section.id} className="scroll-mt-4">
             <SectionHeader
               section={section}
               index={si}
@@ -38,12 +39,12 @@ export function LearningPath() {
               total={sectionLessons.length}
             />
 
-            <div className="mt-6 space-y-10">
+            <div className="mt-5 space-y-6">
               {section.units.map((unit, ui) => {
                 const unitLessons = pathLessons.filter((l) => l.unitId === unit.id);
                 const unitDone = unitLessons.filter((l) => progress.completed.includes(l.id)).length;
                 return (
-                  <div key={unit.id}>
+                  <article key={unit.id} className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
                     <UnitHeader
                       unit={unit}
                       index={ui}
@@ -51,15 +52,16 @@ export function LearningPath() {
                       total={unitLessons.length}
                       color={section.color}
                     />
-                    <div className="mt-5 flex flex-col items-center gap-6 stagger-rise">
+                    <div className="relative flex flex-col items-center gap-7 px-4 py-7 stagger-rise sm:px-8">
+                      <div aria-hidden className="absolute bottom-10 top-8 left-1/2 w-1 -translate-x-1/2 rounded-full bg-border/70" />
                       {unitLessons.map((l) => {
                         const globalIdx = cursor++;
                         const done = progress.completed.includes(l.id);
                         const active = globalIdx === activeIdx;
                         const locked = globalIdx > activeIdx;
-                        const offset = [0, 48, 72, 48, 0, -48, -72, -48][globalIdx % 8];
+                        const offsetClass = ["-translate-x-9", "translate-x-4", "translate-x-10", "translate-x-4"][globalIdx % 4];
                         return (
-                          <div key={l.id} style={{ transform: `translateX(${offset}px)` }}>
+                          <div key={l.id} className={offsetClass}>
                             <LessonNode
                               lesson={l}
                               done={done}
@@ -71,7 +73,7 @@ export function LearningPath() {
                         );
                       })}
                     </div>
-                  </div>
+                  </article>
                 );
               })}
             </div>
@@ -101,7 +103,7 @@ function SectionHeader({
       : "bg-coral text-coral-foreground";
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   return (
-    <div className={`rounded-3xl ${bg} px-5 py-4 shadow-card`}>
+    <div className={`rounded-3xl ${bg} px-5 py-4 shadow-card sm:px-6`}>
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <div className="text-xs font-bold opacity-80 uppercase tracking-wider">
@@ -116,9 +118,9 @@ function SectionHeader({
           {section.emoji}
         </div>
       </div>
-      <div className="mt-3 h-1.5 rounded-full bg-black/15 overflow-hidden">
+      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-foreground/15">
         <div
-          className="h-full bg-white/90 rounded-full"
+          className="h-full rounded-full bg-primary-foreground/90"
           style={{ width: `${pct}%`, transition: "width 600ms var(--ease-out-soft)" }}
         />
       </div>
@@ -143,20 +145,30 @@ function UnitHeader({
     color === "primary" ? "text-primary" : color === "gold" ? "text-gold" : "text-coral";
   const line =
     color === "primary" ? "bg-primary/20" : color === "gold" ? "bg-gold/25" : "bg-coral/25";
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   return (
-    <div className="flex items-center gap-3">
-      <div className={`h-px flex-1 ${line}`} />
-      <div className="text-center">
-        <div className={`text-[10px] font-black uppercase tracking-widest ${accent}`}>
-          Unité {index + 1} · {done}/{total}
+    <div className="border-b border-border bg-muted/35 px-5 py-4 sm:px-6">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <div className={`text-[10px] font-black uppercase ${accent}`}>
+            Unité {index + 1} · {done}/{total} leçons
+          </div>
+          <div className="mt-1 flex items-center gap-2 font-display text-base font-black text-foreground">
+            <span aria-hidden>{unit.emoji}</span>
+            <span className="truncate">{unit.title}</span>
+          </div>
+          <p className="mt-1 text-xs font-bold text-muted-foreground">{unit.objective}</p>
         </div>
-        <div className="text-sm font-black flex items-center gap-1.5 justify-center">
-          <span aria-hidden>{unit.emoji}</span>
-          {unit.title}
+        <div className="shrink-0 text-right">
+          <div className="flex items-center justify-end gap-1 text-xs font-black text-gold-foreground">
+            <Trophy className="size-3.5 text-gold" /> +{unit.reward.xp} XP
+          </div>
+          <p className="mt-1 text-[10px] font-bold text-muted-foreground">{unit.reward.badge} {unit.reward.label}</p>
         </div>
-        <div className="text-[11px] font-semibold text-muted-foreground">{unit.titleFon}</div>
       </div>
-      <div className={`h-px flex-1 ${line}`} />
+      <div className={`mt-3 h-1.5 overflow-hidden rounded-full ${line}`}>
+        <div className={`h-full rounded-full ${color === "primary" ? "bg-primary" : color === "gold" ? "bg-gold" : "bg-coral"}`} style={{ width: `${pct}%` }} />
+      </div>
     </div>
   );
 }
@@ -186,13 +198,12 @@ function LessonNode({
   const doneCls = "bg-success text-success-foreground";
 
   const inner = (
-    <div className={`relative flex flex-col items-center gap-2 ${locked ? "opacity-60" : ""}`}>
+    <div className={`relative flex flex-col items-center gap-2 ${locked ? "opacity-65" : ""}`}>
       {active && (
         <svg
           aria-hidden
           viewBox="0 0 100 100"
-          className="absolute -inset-2 w-[calc(100%+1rem)] h-[calc(100%+1rem)] -z-0"
-          style={{ width: 96, height: 96, top: -8, left: "50%", transform: "translateX(-50%)" }}
+          className="absolute -top-2 left-1/2 -z-0 size-24 -translate-x-1/2"
         >
           <circle cx="50" cy="50" r="46" fill="none" stroke="var(--color-gold)" strokeOpacity="0.25" strokeWidth="4" />
           <circle
@@ -205,48 +216,49 @@ function LessonNode({
             strokeLinecap="round"
             strokeDasharray="60 289"
             transform="rotate(-90 50 50)"
-            className="animate-spin"
-            style={{ transformOrigin: "50px 50px", animationDuration: "4s" }}
+            className="origin-center animate-spin [animation-duration:4s]"
           />
         </svg>
       )}
       <div
-        className={`relative z-10 w-20 h-20 rounded-full grid place-items-center text-3xl btn-3d press ${
+        className={`relative z-10 grid size-20 place-items-center rounded-full border-4 border-card text-3xl btn-3d press ${
           done ? doneCls : locked ? lockedCls : palette
         } ${shaking ? "lock-shake" : ""}`}
       >
         {done ? (
-          <svg viewBox="0 0 24 24" className="w-9 h-9" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline className="check-draw" points="4,12 10,18 20,6" />
-          </svg>
+          <Check className="size-9 check-draw" strokeWidth={3.5} />
         ) : locked ? (
           <Lock className="w-7 h-7" />
         ) : (
-          <span>{lesson.emoji}</span>
+          <Play className="size-8 fill-current" />
         )}
         {active && (
-          <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gold text-gold-foreground text-[10px] font-black px-2 py-0.5 rounded-full shadow flex items-center gap-1 pop-in whitespace-nowrap">
+            <span className="absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full bg-gold px-2 py-0.5 text-[10px] font-black text-gold-foreground shadow pop-in">
             <Star className="w-3 h-3 fill-current" /> COMMENCER
           </span>
         )}
       </div>
-      <div className="text-xs font-bold text-center max-w-[120px] relative z-10">{lesson.title}</div>
+      <div className="relative z-10 max-w-36 rounded-xl border border-border bg-card px-3 py-1.5 text-center shadow-sm">
+        <p className="text-xs font-black text-foreground">{lesson.title}</p>
+        {active && <p className="mt-0.5 text-[10px] font-bold text-primary">Leçon actuelle</p>}
+      </div>
     </div>
   );
 
   if (locked) {
     return (
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => {
           setShaking(true);
           setTimeout(() => setShaking(false), 450);
         }}
-        className="block"
+        className="h-auto p-0 hover:bg-transparent"
         aria-label={`Leçon verrouillée : ${lesson.title}`}
       >
         {inner}
-      </button>
+      </Button>
     );
   }
   return (
