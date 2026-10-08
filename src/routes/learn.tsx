@@ -20,9 +20,11 @@ export const Route = createFileRoute("/learn")({
 function LearnPage() {
   return (
     <div className="min-h-dvh bg-background">
-      <main className="mx-auto max-w-2xl pb-32">
-        <LearnProgressHeader />
-        <div className="mt-8">
+      <main className="mx-auto max-w-6xl pb-32 lg:grid lg:grid-cols-[360px_minmax(0,672px)] lg:justify-center lg:gap-8 lg:px-6">
+        <div className="lg:sticky lg:top-6 lg:h-fit">
+          <LearnProgressHeader />
+        </div>
+        <div className="mt-8 lg:mt-6">
           <div className="mb-4 px-4 sm:px-6">
             <p className="text-xs font-black uppercase text-primary">Ton programme</p>
             <h2 className="mt-1 font-display text-xl font-black text-foreground">Le chemin vers la maîtrise</h2>

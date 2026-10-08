@@ -114,8 +114,8 @@ function SectionHeader({
             {section.titleFon} · {section.subtitle}
           </p>
         </div>
-        <div className="text-5xl shrink-0" aria-hidden>
-          {section.emoji}
+        <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-primary-foreground/15" aria-hidden>
+          <Trophy className="size-6" />
         </div>
       </div>
       <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-foreground/15">
@@ -154,7 +154,7 @@ function UnitHeader({
             Unité {index + 1} · {done}/{total} leçons
           </div>
           <div className="mt-1 flex items-center gap-2 font-display text-base font-black text-foreground">
-            <span aria-hidden>{unit.emoji}</span>
+            <Star className={`size-4 shrink-0 ${accent}`} aria-hidden />
             <span className="truncate">{unit.title}</span>
           </div>
           <p className="mt-1 text-xs font-bold text-muted-foreground">{unit.objective}</p>
@@ -163,7 +163,7 @@ function UnitHeader({
           <div className="flex items-center justify-end gap-1 text-xs font-black text-gold-foreground">
             <Trophy className="size-3.5 text-gold" /> +{unit.reward.xp} XP
           </div>
-          <p className="mt-1 text-[10px] font-bold text-muted-foreground">{unit.reward.badge} {unit.reward.label}</p>
+          <p className="mt-1 text-[10px] font-bold text-muted-foreground">{unit.reward.label}</p>
         </div>
       </div>
       <div className={`mt-3 h-1.5 overflow-hidden rounded-full ${line}`}>
