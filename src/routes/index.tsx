@@ -17,6 +17,8 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:title", content: "Kwabo — Apprends le Fɔngbè avec AYI" },
       { property: "og:description", content: "L'apprentissage des langues béninoises, en immersion." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Home,
@@ -24,31 +26,16 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   return (
-    <div className="min-h-dvh bg-background relative overflow-hidden">
-      {/* Ambient background accents */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-32 -right-24 w-80 h-80 rounded-full bg-primary/10 blur-3xl"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-64 -left-32 w-72 h-72 rounded-full bg-gold/15 blur-3xl"
-      />
-
+    <div className="min-h-dvh bg-background">
       <BrandHeader />
 
-      <main className="relative max-w-2xl mx-auto pt-4 pb-32">
-        <HeroCard />
-
-        <div className="mt-6">
+      <main className="mx-auto grid max-w-6xl gap-5 px-4 pb-32 pt-5 sm:px-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(300px,0.8fr)] lg:items-start lg:gap-6 lg:pb-28 lg:pt-7">
+        <div className="min-w-0 space-y-5">
+          <HeroCard />
           <MotivationCards />
         </div>
-
-        <div className="mt-6">
+        <div className="min-w-0 space-y-5">
           <AyiTip />
-        </div>
-
-        <div className="mt-6">
           <CultureCard />
         </div>
       </main>
