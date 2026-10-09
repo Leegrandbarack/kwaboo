@@ -76,30 +76,6 @@ export function buildAlphabetExercises() {
     };
   };
 
-  const fromSound = (u: string, distract: string[]) => {
-    const l = get(u);
-    return {
-      type: "listen" as const,
-      prompt: "Écoute et choisis la bonne lettre",
-      audioText: l.say,
-      question: "Quelle lettre entends-tu ?",
-      options: [l.upper, ...others(l.upper, distract)].sort(),
-      answer: l.upper,
-    };
-  };
-
-  const writeLetter = (u: string) => {
-    const l = get(u);
-    return {
-      type: "write" as const,
-      prompt: "Écris la lettre correspondante",
-      question: `Quelle lettre du fon se prononce « ${l.say} » ?`,
-      answer: l.lower,
-      accept: [l.upper, l.upper.toLowerCase(), l.lower.toUpperCase()],
-      hint: l.special ? "C'est une lettre propre au fon." : "Elle existe aussi en français.",
-    };
-  };
-
   return [
     pronounce("Ɖ", ["dor", "ndor", "tor", "gor"]),
     pronounce("X", ["sroh", "iks", "kor", "soh"]),
@@ -108,24 +84,18 @@ export function buildAlphabetExercises() {
       prompt: "Associe chaque lettre du fon à son son",
       pairs: focus.slice(0, 4).map((l) => ({ fr: l.upper, fon: l.say })),
     },
-    fromSound("GB", ["GB", "B", "G", "KP"]),
     pronounce("C", ["tch", "sé", "kor", "dj"]),
-    writeLetter("Ɔ"),
     {
       type: "match" as const,
       prompt: "Associe les voyelles nasales à leur son",
       pairs: nasals.slice(0, 4).map((l) => ({ fr: l.upper, fon: l.say })),
     },
-    fromSound("UN", ["UN", "U", "ƆN", "IN"]),
     pronounce("Ɛ", ["ê", "é", "i", "or"]),
     {
       type: "match" as const,
       prompt: "Associe chaque lettre du fon à son son",
       pairs: focus.slice(4).map((l) => ({ fr: l.upper, fon: l.say })),
     },
-    writeLetter("Ɛ"),
-    fromSound("NY", ["NY", "N", "M", "Y"]),
     pronounce("L", ["nlo", "el", "lor", "non"]),
-    writeLetter("X"),
   ];
 }
