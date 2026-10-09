@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
+import type { Exercise } from "@/lib/curriculum";
 
 /**
- * Révision intelligente : répétition espacée simple (type Leitner).
- * Niveau de maîtrise 0 → 5. Plus le niveau est haut, plus l'intervalle est long.
+ * Révision espacée par élément (inspirée de Duolingo) :
+ * force 0 → 5, intervalle croissant, baisse avec le temps sans révision.
  * Stockage local — remplaçable par une table Cloud sans changer l'API.
  */
 
 const KEY = "kwabo:review:v1";
 const DAY = 86400000;
 
-/** Intervalle (en jours) selon le niveau de maîtrise. */
+/** Intervalle (en jours) selon la force. */
 const INTERVALS = [0, 1, 2, 4, 7, 14];
 
 export type ReviewItem = {
@@ -23,6 +24,9 @@ export type ReviewItem = {
   dueAt: number;
   misses: number;
   createdAt: number;
+  /** Exercice d'origine, pour le rejouer en entraînement */
+  exercise?: Exercise;
+  lastSeen?: number;
 };
 
 export function loadReview(): ReviewItem[] {
@@ -43,6 +47,14 @@ function saveReview(items: ReviewItem[]) {
   window.dispatchEvent(new CustomEvent("kwabo:review"));
 }
 
+/** Force actuelle, diminuée d'un point par intervalle dépassé sans révision. */
+export function currentStrength(it: ReviewItem, now = Date.now()): number {
+  const overdue = now - it.dueAt;
+  if (overdue <= 0) return it.mastery;
+  const step = Math.max(1, INTERVALS[it.mastery] ?? 1) * DAY;
+  return Math.max(0, it.mastery - Math.floor(overdue / step));
+}
+
 export function masteryLabel(m: number): string {
   if (m <= 0) return "Fragile";
   if (m === 1) return "À revoir";
@@ -51,30 +63,59 @@ export function masteryLabel(m: number): string {
   return "Maîtrisé";
 }
 
-/** Enregistre une erreur : crée l'item ou le rétrograde. */
-export function recordMistake(input: { question: string; answer: string; lessonId: string; lessonTitle: string }) {
+type AttemptInput = {
+  question: string;
+  answer: string;
+  lessonId: string;
+  lessonTitle: string;
+  exercise?: Exercise;
+};
+
+const itemId = (lessonId: string, question: string) => `${lessonId}::${question}`.slice(0, 160);
+
+/** Enregistre une tentative : la force monte si juste, baisse si faux. */
+export function recordAttempt(input: AttemptInput, ok: boolean) {
   const items = loadReview();
-  const id = `${input.lessonId}::${input.question}`.slice(0, 160);
-  const existing = items.find((i) => i.id === id);
-  if (existing) {
-    existing.mastery = Math.max(0, existing.mastery - 1);
-    existing.misses += 1;
-    existing.dueAt = Date.now();
-    existing.answer = input.answer;
-  } else {
-    items.push({
+  const now = Date.now();
+  const id = itemId(input.lessonId, input.question);
+  let it = items.find((i) => i.id === id);
+  if (!it) {
+    it = {
       id,
       question: input.question,
       answer: input.answer,
       lessonId: input.lessonId,
       lessonTitle: input.lessonTitle,
-      mastery: 0,
-      misses: 1,
-      dueAt: Date.now(),
-      createdAt: Date.now(),
-    });
+      mastery: ok ? 1 : 0,
+      misses: 0,
+      dueAt: now,
+      createdAt: now,
+    };
+    items.push(it);
+  } else {
+    const strength = currentStrength(it, now);
+    it.mastery = ok ? Math.min(5, strength + 1) : Math.max(0, strength - 1);
   }
+  if (!ok) it.misses += 1;
+  it.answer = input.answer;
+  if (input.exercise) it.exercise = input.exercise;
+  it.lastSeen = now;
+  it.dueAt = ok ? now + (INTERVALS[it.mastery] ?? 14) * DAY : now;
   saveReview(items);
+}
+
+/** Compatibilité : une erreur = tentative ratée. */
+export function recordMistake(input: AttemptInput) {
+  recordAttempt(input, false);
+}
+
+/** Éléments à revoir en priorité : échus ou faibles, du plus fragile au plus solide. */
+export function practiceItems(limit = 10): ReviewItem[] {
+  const now = Date.now();
+  return loadReview()
+    .filter((i) => i.exercise && (i.dueAt <= now || currentStrength(i, now) < 3))
+    .sort((a, b) => currentStrength(a, now) - currentStrength(b, now) || a.dueAt - b.dueAt)
+    .slice(0, limit);
 }
 
 export function useReview() {
@@ -87,7 +128,6 @@ export function useReview() {
     return () => window.removeEventListener("kwabo:review", h);
   }, []);
 
-  /** « Je maîtrise » : monte d'un niveau et repousse l'échéance. */
   const promote = useCallback((id: string) => {
     const list = loadReview();
     const it = list.find((i) => i.id === id);
@@ -97,7 +137,6 @@ export function useReview() {
     saveReview(list);
   }, []);
 
-  /** « Encore difficile » : redescend et remet en file immédiatement. */
   const demote = useCallback((id: string) => {
     const list = loadReview();
     const it = list.find((i) => i.id === id);
@@ -114,8 +153,10 @@ export function useReview() {
 
   const clear = useCallback(() => saveReview([]), []);
 
-  const due = items.filter((i) => i.dueAt <= Date.now());
-  const mastered = items.filter((i) => i.mastery >= 5);
+  const now = Date.now();
+  const due = items.filter((i) => i.dueAt <= now);
+  const practicable = items.filter((i) => i.exercise && (i.dueAt <= now || currentStrength(i, now) < 3));
+  const mastered = items.filter((i) => currentStrength(i, now) >= 5);
 
-  return { items, due, mastered, promote, demote, remove, clear };
+  return { items, due, practicable, mastered, promote, demote, remove, clear };
 }
