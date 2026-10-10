@@ -14,6 +14,7 @@ import { Route as TraductionRouteImport } from './routes/traduction'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as ParametresRouteImport } from './routes/parametres'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NoHeartsRouteImport } from './routes/no-hearts'
@@ -49,6 +50,11 @@ const ShopRoute = ShopRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PracticeRoute = PracticeRouteImport.update({
+  id: '/practice',
+  path: '/practice',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ParametresRoute = ParametresRouteImport.update({
@@ -118,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/no-hearts': typeof NoHeartsRoute
   '/onboarding': typeof OnboardingRoute
   '/parametres': typeof ParametresRoute
+  '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/no-hearts': typeof NoHeartsRoute
   '/onboarding': typeof OnboardingRoute
   '/parametres': typeof ParametresRoute
+  '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
@@ -155,6 +163,7 @@ export interface FileRoutesById {
   '/no-hearts': typeof NoHeartsRoute
   '/onboarding': typeof OnboardingRoute
   '/parametres': typeof ParametresRoute
+  '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
     | '/no-hearts'
     | '/onboarding'
     | '/parametres'
+    | '/practice'
     | '/profile'
     | '/shop'
     | '/signup'
@@ -193,6 +203,7 @@ export interface FileRouteTypes {
     | '/no-hearts'
     | '/onboarding'
     | '/parametres'
+    | '/practice'
     | '/profile'
     | '/shop'
     | '/signup'
@@ -211,6 +222,7 @@ export interface FileRouteTypes {
     | '/no-hearts'
     | '/onboarding'
     | '/parametres'
+    | '/practice'
     | '/profile'
     | '/shop'
     | '/signup'
@@ -230,6 +242,7 @@ export interface RootRouteChildren {
   NoHeartsRoute: typeof NoHeartsRoute
   OnboardingRoute: typeof OnboardingRoute
   ParametresRoute: typeof ParametresRoute
+  PracticeRoute: typeof PracticeRoute
   ProfileRoute: typeof ProfileRoute
   ShopRoute: typeof ShopRoute
   SignupRoute: typeof SignupRoute
@@ -273,6 +286,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/practice': {
+      id: '/practice'
+      path: '/practice'
+      fullPath: '/practice'
+      preLoaderRoute: typeof PracticeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/parametres': {
@@ -366,6 +386,7 @@ const rootRouteChildren: RootRouteChildren = {
   NoHeartsRoute: NoHeartsRoute,
   OnboardingRoute: OnboardingRoute,
   ParametresRoute: ParametresRoute,
+  PracticeRoute: PracticeRoute,
   ProfileRoute: ProfileRoute,
   ShopRoute: ShopRoute,
   SignupRoute: SignupRoute,
