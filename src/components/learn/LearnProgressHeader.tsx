@@ -1,11 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Flame, Sparkles, Trophy } from "lucide-react";
+import { ArrowRight, Dumbbell, Flame, Sparkles, Trophy } from "lucide-react";
+import { useReview } from "@/lib/review";
 import { Button } from "@/components/ui/button";
 import { pathLessons } from "@/lib/curriculum";
 import { useProgress } from "@/lib/progress";
 
 export function LearnProgressHeader() {
   const { progress } = useProgress();
+  const { practicable } = useReview();
   const completedCount = pathLessons.filter((lesson) => progress.completed.includes(lesson.id)).length;
   const nextLesson = pathLessons.find((lesson) => !progress.completed.includes(lesson.id));
   const percentage = pathLessons.length > 0 ? Math.round((completedCount / pathLessons.length) * 100) : 0;
@@ -59,6 +61,27 @@ export function LearnProgressHeader() {
             </Button>
           ) : (
             <span className="rounded-xl bg-success/10 px-3 py-2 text-sm font-black text-success">Bravo !</span>
+          )}
+        </div>
+        <div className="flex items-center justify-between gap-4 border-t border-border px-5 py-4 sm:px-7">
+          <div className="min-w-0">
+            <p className="text-xs font-black uppercase text-muted-foreground">Entraînement</p>
+            <p className="text-sm font-bold text-foreground">
+              {practicable.length > 0
+                ? `${practicable.length} élément${practicable.length > 1 ? "s" : ""} à revoir`
+                : "Rien à revoir pour l'instant : fais une leçon d'abord."}
+            </p>
+          </div>
+          {practicable.length > 0 ? (
+            <Button asChild size="lg" variant="outline" className="btn-3d shrink-0 rounded-xl font-black">
+              <Link to="/practice">
+                <Dumbbell /> S'entraîner
+              </Link>
+            </Button>
+          ) : (
+            <Button size="lg" variant="outline" disabled className="shrink-0 rounded-xl font-black">
+              <Dumbbell /> S'entraîner
+            </Button>
           )}
         </div>
       </div>

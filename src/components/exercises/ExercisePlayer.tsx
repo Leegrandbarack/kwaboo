@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate, Link } from "@tanstack/react-router";
 import { X, Check, Lightbulb, Heart } from "lucide-react";
 import type { Exercise } from "@/lib/curriculum";
 import { useProgress } from "@/lib/progress";
-import { recordMistake } from "@/lib/review";
+import { recordAttempt } from "@/lib/review";
+import { adaptExercises, normalizeAnswer, recordPerformance } from "@/lib/learning";
 import { Ayi, AyiBubble } from "@/components/Ayi";
 import { Confetti } from "@/components/Confetti";
 import { QuitLessonDialog } from "@/components/QuitLessonDialog";
@@ -15,13 +16,20 @@ type Props = {
   lessonId: string;
   lessonTitle: string;
   exercises: Exercise[];
+  /** Séance d'entraînement : XP réduit, ne compte pas comme leçon du parcours */
+  practice?: boolean;
 };
 
-export function ExercisePlayer({ lessonId, lessonTitle, exercises }: Props) {
+export function ExercisePlayer({ lessonId, lessonTitle, exercises, practice = false }: Props) {
   const navigate = useNavigate();
   const { progress, completeLesson, loseHeart } = useProgress();
 
+  const [queue, setQueue] = useState<Exercise[]>(exercises);
   const [idx, setIdx] = useState(0);
+  const [solved, setSolved] = useState(0);
+  useEffect(() => {
+    setQueue(adaptExercises(exercises));
+  }, [exercises]);
   const [answer, setAnswer] = useState<unknown>(null);
   const [checked, setChecked] = useState(false);
   const [correct, setCorrect] = useState(false);
@@ -31,8 +39,9 @@ export function ExercisePlayer({ lessonId, lessonTitle, exercises }: Props) {
   const [showQuit, setShowQuit] = useState(false);
 
   const total = exercises.length;
-  const ex = exercises[idx];
-  const progressPct = ((idx + (checked ? 1 : 0)) / total) * 100;
+  const ex = queue[idx];
+  const progressPct = total > 0 ? (solved / total) * 100 : 0;
+  const xpFor = (m: number) => (practice ? Math.max(3, 10 - m) : Math.max(5, 20 - m * 2));
 
   // Block lesson if no hearts and not unlimited
   if (!done && progress.hearts <= 0 && !progress.unlimitedHearts) {
@@ -52,18 +61,20 @@ export function ExercisePlayer({ lessonId, lessonTitle, exercises }: Props) {
   function check(isCorrect: boolean) {
     setChecked(true);
     setCorrect(isCorrect);
+    recordPerformance(isCorrect);
+    recordAttempt(
+      { question: questionText(ex), answer: correctText(ex), lessonId: practice ? "practice" : lessonId, lessonTitle, exercise: ex },
+      isCorrect,
+    );
     if (isCorrect) {
       sound.correct();
+      setSolved((n) => n + 1);
     } else {
       sound.wrong();
       setMistakes((m) => m + 1);
       loseHeart();
-      recordMistake({
-        question: questionText(ex),
-        answer: correctText(ex),
-        lessonId,
-        lessonTitle,
-      });
+      // Reprise des erreurs : la question revient en fin de leçon
+      setQueue((q) => [...q, ex]);
     }
   }
 
@@ -72,9 +83,8 @@ export function ExercisePlayer({ lessonId, lessonTitle, exercises }: Props) {
     setChecked(false);
     setAnswer(null);
     setShowHint(false);
-    if (idx + 1 >= total) {
-      const xp = Math.max(5, 20 - mistakes * 2);
-      completeLesson(lessonId, xp, mistakes === 0);
+    if (idx + 1 >= queue.length) {
+      completeLesson(practice ? "practice" : lessonId, xpFor(mistakes), mistakes === 0);
       sound.finish();
       setDone(true);
     } else {
@@ -83,7 +93,7 @@ export function ExercisePlayer({ lessonId, lessonTitle, exercises }: Props) {
   }
 
   if (done) {
-    const xpGained = Math.max(5, 20 - mistakes * 2);
+    const xpGained = xpFor(mistakes);
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center gap-6 bg-gradient-hero text-white">
         <Confetti trigger={true} />
@@ -94,11 +104,11 @@ export function ExercisePlayer({ lessonId, lessonTitle, exercises }: Props) {
         </p>
         <div className="grid grid-cols-3 gap-3 w-full max-w-md">
           <Stat label="XP" value={`+${xpGained}`} />
-          <Stat label="Précision" value={`${Math.round(((total - mistakes) / total) * 100)}%`} />
+          <Stat label="Précision" value={`${Math.round((total / (total + mistakes)) * 100)}%`} />
           <Stat label="Gemmes" value={mistakes === 0 ? "+10" : "+5"} />
         </div>
         <button
-          onClick={() => navigate({ to: "/" })}
+          onClick={() => navigate({ to: practice ? "/learn" : "/" })}
           className="btn-3d mt-4 bg-white text-primary font-black px-10 py-4 rounded-2xl uppercase tracking-wider"
           style={{ boxShadow: "0 4px 0 0 rgba(0,0,0,0.2)" }}
         >
@@ -133,12 +143,12 @@ export function ExercisePlayer({ lessonId, lessonTitle, exercises }: Props) {
       >
         <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{ex.prompt}</div>
         <ExerciseBody ex={ex} answer={answer} setAnswer={setAnswer} disabled={checked} />
-        {ex.type === "choice" && ex.hint && !checked && (
+        {(ex.type === "choice" || ex.type === "write") && ex.hint && !checked && (
           <button onClick={() => setShowHint((s) => !s)} className="press mt-4 inline-flex items-center gap-1 text-xs font-bold text-muted-foreground hover:text-foreground">
             <Lightbulb className="w-4 h-4" /> {showHint ? "Cacher l'indice" : "Indice d'AYI"}
           </button>
         )}
-        {showHint && ex.type === "choice" && ex.hint && (
+        {showHint && (ex.type === "choice" || ex.type === "write") && ex.hint && (
           <div className="mt-3"><AyiBubble mood="thinking">{ex.hint}</AyiBubble></div>
         )}
       </div>
@@ -207,9 +217,94 @@ function ExerciseBody({ ex, answer, setAnswer, disabled }: { ex: Exercise; answe
     );
   }
 
+  if (ex.type === "listen") {
+    return (
+      <>
+        <h2 className="text-2xl font-black mb-4">{ex.question}</h2>
+        <div className="flex justify-center mb-6">
+          <SpeakButton text={ex.audioText} size="lg" />
+        </div>
+        <ChoiceGrid options={ex.options} answer={answer} setAnswer={setAnswer} disabled={disabled} />
+      </>
+    );
+  }
+
+  if (ex.type === "write") {
+    return (
+      <>
+        <h2 className="text-2xl font-black mb-6">{ex.question}</h2>
+        <input
+          type="text"
+          autoFocus
+          autoComplete="off"
+          aria-label="Ta réponse"
+          disabled={disabled}
+          value={typeof answer === "string" ? answer : ""}
+          onChange={(e) => setAnswer(e.target.value)}
+          placeholder="Écris ta réponse…"
+          className="w-full rounded-2xl border-2 border-border bg-card px-4 py-4 text-xl font-bold outline-none focus:border-primary"
+        />
+      </>
+    );
+  }
+
+  if (ex.type === "fill") {
+    return (
+      <>
+        <h2 className="text-2xl font-black mb-2">{ex.sentence}</h2>
+        {ex.translation && <p className="text-muted-foreground italic mb-6">« {ex.translation} »</p>}
+        <ChoiceGrid options={ex.options} answer={answer} setAnswer={setAnswer} disabled={disabled} />
+      </>
+    );
+  }
+
+  if (ex.type === "image") {
+    return (
+      <>
+        <h2 className="text-2xl font-black mb-6">{ex.question}</h2>
+        <div className="grid grid-cols-2 gap-3">
+          {ex.options.map((o) => {
+            const selected = answer === o.label;
+            return (
+              <button
+                key={o.label}
+                disabled={disabled}
+                onClick={() => setAnswer(o.label)}
+                className={`btn-3d flex flex-col items-center gap-2 px-4 py-5 rounded-2xl border-2 font-bold ${selected ? "border-primary bg-primary/10 text-primary" : "border-border bg-card hover:border-primary/50"}`}
+              >
+                <span className="text-5xl" aria-hidden>{o.emoji}</span>
+                {o.label}
+              </button>
+            );
+          })}
+        </div>
+      </>
+    );
+  }
+
   if (ex.type === "order") return <OrderExercise ex={ex} answer={answer as string[] | null} setAnswer={setAnswer} disabled={disabled} />;
   if (ex.type === "match") return <MatchExercise ex={ex} answer={answer as Record<string, string> | null} setAnswer={setAnswer} disabled={disabled} />;
   return null;
+}
+
+function ChoiceGrid({ options, answer, setAnswer, disabled }: { options: string[]; answer: unknown; setAnswer: (v: unknown) => void; disabled: boolean }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {options.map((o) => {
+        const selected = answer === o;
+        return (
+          <button
+            key={o}
+            disabled={disabled}
+            onClick={() => setAnswer(o)}
+            className={`btn-3d text-left px-4 py-4 rounded-2xl border-2 font-bold text-base transition-colors ${selected ? "border-primary bg-primary/10 text-primary" : "border-border bg-card hover:border-primary/50"}`}
+          >
+            {o}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 function OrderExercise({ ex, answer, setAnswer, disabled }: { ex: Extract<Exercise, { type: "order" }>; answer: string[] | null; setAnswer: (v: string[]) => void; disabled: boolean }) {
@@ -319,13 +414,18 @@ function Footer({ ex, answer, checked, correct, onCheck, onNext }: { ex: Exercis
 
 function isReady(ex: Exercise, ans: unknown): boolean {
   if (ans == null) return false;
-  if (ex.type === "choice" || ex.type === "translate") return typeof ans === "string";
+  if (ex.type === "write") return typeof ans === "string" && ans.trim().length > 0;
+  if (ex.type === "choice" || ex.type === "translate" || ex.type === "listen" || ex.type === "fill" || ex.type === "image") return typeof ans === "string";
   if (ex.type === "order") return Array.isArray(ans) && ans.length === ex.words.length;
   if (ex.type === "match") return typeof ans === "object" && Object.keys(ans as object).length === ex.pairs.length;
   return false;
 }
 function isCorrect(ex: Exercise, ans: unknown): boolean {
-  if (ex.type === "choice" || ex.type === "translate") return ans === ex.answer;
+  if (ex.type === "write") {
+    const a = normalizeAnswer(String(ans));
+    return [ex.answer, ...(ex.accept ?? [])].some((ok) => normalizeAnswer(ok) === a);
+  }
+  if (ex.type === "choice" || ex.type === "translate" || ex.type === "listen" || ex.type === "fill" || ex.type === "image") return ans === ex.answer;
   if (ex.type === "order") return Array.isArray(ans) && ans.join(" ") === ex.answer.join(" ");
   if (ex.type === "match") {
     const a = ans as Record<string, string>;
@@ -343,12 +443,17 @@ function questionText(ex: Exercise): string {
       return ex.french;
     case "match":
       return ex.pairs.map((p) => p.fr).join(", ");
-    default:
-      return ex.prompt;
+    case "listen":
+      return `${ex.question} (${ex.audioText})`;
+    case "write":
+    case "image":
+      return ex.question;
+    case "fill":
+      return ex.sentence;
   }
 }
 function correctText(ex: Exercise): string {
-  if (ex.type === "choice" || ex.type === "translate") return ex.answer;
+  if (ex.type === "choice" || ex.type === "translate" || ex.type === "listen" || ex.type === "write" || ex.type === "fill" || ex.type === "image") return ex.answer;
   if (ex.type === "order") return ex.answer.join(" ");
   if (ex.type === "match") return ex.pairs.map((p) => `${p.fr} = ${p.fon}`).join(", ");
   return "";
